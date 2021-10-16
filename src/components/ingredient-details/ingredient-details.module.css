@@ -1,0 +1,24 @@
+
+.image {
+    width: 480px;
+    height: 240px;
+    margin: 0rem auto 16px auto;
+}
+
+.title {
+    font-size: 30px;
+    text-align: center;
+}
+
+.nutrients {
+    display: flex;
+    justify-content: space-between;
+    /* margin-top: 3rem; */
+}
+
+.nutrient__column {
+    display: flex;
+    flex-direction: column;
+    /* margin: 0rem 1rem; */
+    align-items: center;
+}
