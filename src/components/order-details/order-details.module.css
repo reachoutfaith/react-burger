@@ -1,0 +1,20 @@
+.all-texts {
+    text-align: center;
+}
+
+.title {
+    composes: all-texts;
+    /* margin-top: 2rem; */
+    /* margin-bottom: 3.2rem; */
+}
+
+.image {
+    width: 12rem;
+    height: 12rem;
+    margin: 4rem auto;
+}
+
+.text {
+    composes: all-texts;
+}
+

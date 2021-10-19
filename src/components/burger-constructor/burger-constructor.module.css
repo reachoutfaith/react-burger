@@ -1,0 +1,50 @@
+.wrapper {
+
+}
+.scrollArea {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 360px);
+    min-height: 300px;
+    overflow-y: scroll;
+    margin: 0px auto;
+    flex-grow: 1;
+    position: relative;
+}
+
+.scrollArea::-webkit-scrollbar {
+    width: 8px;
+    background-color: #2F2F37;;
+}
+.scrollArea::-webkit-scrollbar-thumb {
+    background: #8585AD;
+}
+
+
+.priceCard {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    /* margin-top: 4rem; */
+}
+
+.priceCard svg {
+    width: 3.3rem;
+    height: 3.3rem;
+    margin: 0rem 4rem 0rem 1rem;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    /* margin-top: 8px;
+    margin-bottom: 8px; */
+}
+
+.item:first-child {
+    margin-top: 0rem;
+}
+
+.item:last-child {
+    margin-bottom: 0rem;
+}

@@ -1,0 +1,57 @@
+.wrapper {
+    max-width: 600px;
+}
+.title {
+    margin-bottom: 20px;
+}
+
+.scrollArea {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    height: 500px; 
+    overflow-y: scroll;
+}
+
+.scrollArea::-webkit-scrollbar {
+    width: 8px;
+    background-color: #2F2F37;;
+}
+.scrollArea::-webkit-scrollbar-thumb {
+    background: #8585AD;
+}
+
+.subTitle {
+    width: 100%;
+    margin-top: 1.6rem;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    max-width: 272px;
+    justify-content: center;
+    margin: 1.6rem 0rem;
+    position: relative;
+}
+
+.card img {
+    max-width: 240px;
+    margin: 0rem auto;
+}
+
+.text {
+    text-align: center;
+}
+
+.price {
+    composes: text;
+    display: flex;
+    justify-content: center;
+    margin: .8rem 0rem;
+}
+
+.price svg {
+  margin-left: 8px;  
+}
