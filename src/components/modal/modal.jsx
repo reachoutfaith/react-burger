@@ -37,7 +37,6 @@ const Modal = (props) => {
                         {props.children}
                     </main>
                 </div>
-                <ModalOverlay />
             </div>
         ),
         modalRoot
@@ -48,7 +47,7 @@ const Modal = (props) => {
 Modal.propTypes = {
     children: PropTypes.node.isRequired,
     closeModal: PropTypes.func.isRequired,
-    title: PropTypes.string.isRequired
+    title: PropTypes.string
 };
 
 

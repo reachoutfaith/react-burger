@@ -5,7 +5,6 @@ import itemObj from '../utils/types';
 
 const IngredientDetails = (props) => {
     const item = props;
-    console.log(props)
 
     return (
         <>
@@ -35,7 +34,7 @@ const IngredientDetails = (props) => {
 
 
 IngredientDetails.propTypes = {
-    item: PropTypes.objectOf(itemObj).isRequired
+    item: PropTypes.objectOf(itemObj)
 };
 
 
