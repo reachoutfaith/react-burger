@@ -2,9 +2,10 @@ import React from 'react';
 import IngredientDetailsStyle from './ingredient-details.module.css';
 import PropTypes from 'prop-types';
 import itemObj from '../utils/types';
+import { useSelector, useDispatch } from 'react-redux';
 
-const IngredientDetails = (props) => {
-    const item = props;
+const IngredientDetails = () => {
+    const item = useSelector(store => store.ingredients.ingredient);
 
     return (
         <>

@@ -16,5 +16,4 @@ const itemObj = PropTypes.shape({
     __v: PropTypes.number
 });
 
-
 export default itemObj;
