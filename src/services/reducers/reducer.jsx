@@ -15,26 +15,10 @@ import {
     ADD_ITEM_TO_COUNTER,
     DELETE_ITEM_FROM_COUNTER
 } from '../actions/actions';
-
-const initialStore = {
-    ingredients: [],
-    currentIngredients: [],
-    ingredient: {},
-    order: {},
-    ingredientsRequest: false,
-    ingredientsSuccess: false,
-    ingredientsFailed: false,
-    totalPrice: 0,
-    bun: {},
-    isBunAdded: false,
-    sendOrderRequest: false,
-    sendOrderSuccess: false,
-    sendOrderFailed: false,
-    counterIngredients: []
-}
+import store from '../store'
 
 
-export const ingredientsReducer = (state = initialStore, action) => {
+export const ingredientsReducer = (state = store, action) => {
     switch (action.type) {
         case GET_BURGER_INGREDIENTS_REQUEST: {
             return { ...state, ingredientsRequest: true }
@@ -57,15 +41,6 @@ export const ingredientsReducer = (state = initialStore, action) => {
         case DELETE_INGREDIENT: {
             return { ...state, ingredient: {} }
         }
-        case SEND_ORDER_ITEMS_REQUEST: {
-            return { ...state, sendOrderRequest: true }
-        }
-        case SEND_ORDER_ITEMS_SUCCESS: {
-            return { ...state, sendOrderSuccess: true, sendOrderRequest: false, order: action.order }
-        }
-        case SEND_ORDER_ITEMS_ERROR: {
-            return { ...state, sendOrderFailed: true, sendOrderRequest: false }
-        }
         case ADD_ITEM_TO_COUNTER: {
             return {
                 ...state,
@@ -78,15 +53,22 @@ export const ingredientsReducer = (state = initialStore, action) => {
                 counterIngredients: action.copiedCounterArray
             }
         }
-        default: {
-            return state;
+        case SEND_ORDER_ITEMS_REQUEST: {
+            return { ...state, sendOrderRequest: true }
         }
-    }
-}
-
-export const currentIngredientsReducer = (state = initialStore, action) => {
-
-    switch (action.type) {
+        case SEND_ORDER_ITEMS_SUCCESS: {
+            return {
+                ...state, sendOrderSuccess: true, sendOrderRequest: false, order: action.order,
+                currentIngredients: [],
+                bun: {},
+                isBunAdded: false,
+                totalPrice: 0,
+                counterIngredients: [...state.counterIngredients].map(item => item = { ...item, counter: 0 })
+            }
+        }
+        case SEND_ORDER_ITEMS_ERROR: {
+            return { ...state, sendOrderFailed: true, sendOrderRequest: false }
+        }
         case ADD_BURGER_INGREDIENT: {
             return {
                 ...state,
@@ -113,7 +95,7 @@ export const currentIngredientsReducer = (state = initialStore, action) => {
         case CHANGE_INGREDIENTS_POSITION: {
             return {
                 ...state,
-                currentIngredients: action.ingredients
+                currentIngredients: [...action.newCards]
 
             }
         }
@@ -123,8 +105,7 @@ export const currentIngredientsReducer = (state = initialStore, action) => {
     }
 }
 
-export const rootReducer = combineReducers({
-    ingredients: ingredientsReducer,
-    currentIngredients: currentIngredientsReducer
 
+export const rootReducer = combineReducers({
+    ingredients: ingredientsReducer
 });

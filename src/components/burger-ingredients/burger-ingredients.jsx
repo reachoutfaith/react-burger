@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import BurgerIngredientsStyle from './burger-ingredients.module.css'
 import { Counter, Tab, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 import PropTypes from 'prop-types';
@@ -7,7 +7,7 @@ import IngredientDetails from '../ingredient-details/ingredient-details';
 import itemObj from '../utils/types';
 import { ItemTypes } from '../utils/ItemTypes';
 import { useDrag } from 'react-dnd';
-import { SHOW_INGREDIENT, DELETE_INGREDIENT, getIngredients } from '../../services/actions/actions';
+import { SHOW_INGREDIENT, DELETE_INGREDIENT } from '../../services/actions/actions';
 import { useSelector, useDispatch } from 'react-redux';
 
 
@@ -15,7 +15,7 @@ function Ingredient(props) {
     let count = 0;
     const item = props.item;
     const menuCounter = useSelector(store => store.ingredients.counterIngredients);
-    let element = menuCounter.filter(elem => elem._id === item._id);
+    const element = useMemo(() => (menuCounter.filter(elem => elem._id === item._id)), [menuCounter])
 
     if (element[0]["counter"] !== undefined && element[0]["counter"] >= 1) {
         count = element[0]["counter"]
@@ -66,10 +66,8 @@ const BurgerIngredients = () => {
 
     useEffect(
         () => {
-            dispatch(getIngredients());
-
-            let startPosition = bunsTitleRef.current.getBoundingClientRect().y;
-            let container = containerRef.current;
+            const startPosition = bunsTitleRef.current.getBoundingClientRect().y;
+            const container = containerRef.current;
             container.addEventListener('scroll', function () {
                 handleScroll(startPosition)
             })
@@ -79,12 +77,11 @@ const BurgerIngredients = () => {
                     handleScroll(startPosition)
                 })
             };
-        }, [dispatch]
+        }, []
     )
 
 
     const handleScroll = (start) => {
-        const bunsPosition = bunsTitleRef.current.getBoundingClientRect().y;
         const saucesPosition = saucesTitleRef.current.getBoundingClientRect().y;
         const mainPosition = mainTitleRef.current.getBoundingClientRect().y;
 

@@ -34,9 +34,4 @@ const IngredientDetails = () => {
 }
 
 
-IngredientDetails.propTypes = {
-    item: PropTypes.objectOf(itemObj)
-};
-
-
 export default IngredientDetails

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback, useMemo } from 'react';
 import BurgerConstructorStyle from './burger-constructor.module.css'
 import { ConstructorElement, CurrencyIcon, Button, DragIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 import PropTypes from 'prop-types';
@@ -19,15 +19,13 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 
 
-
 const DraggableIngredient = (props) => {
     const item = props.item;
     const id = props.item._id;
     const index = props.index;
     const ref = useRef(null);
-    const changeIngredientPosition = props.changeIngredientPosition;
     const deleteItem = props.deleteItem;
-
+    const moveCard = props.moveCard;
 
     const [{ handlerId }, drop] = useDrop({
         accept: ItemTypes.INGREDIENT,
@@ -59,7 +57,7 @@ const DraggableIngredient = (props) => {
                 return;
             }
 
-            changeIngredientPosition(dragIndex, hoverIndex);
+            moveCard(dragIndex, hoverIndex)
             item.index = hoverIndex;
         },
     });
@@ -88,14 +86,26 @@ const DraggableIngredient = (props) => {
 }
 
 const BurgerConstructor = () => {
-    const totalPrice = useSelector(store => store.currentIngredients.totalPrice);
-    const data = useSelector(store => store.currentIngredients.currentIngredients);
-    const isBunAdded = useSelector(store => store.currentIngredients.isBunAdded);
-    const bun = useSelector(store => store.currentIngredients.bun);
+    const totalPrice = useSelector(store => store.ingredients.totalPrice);
+    const data = useSelector(store => store.ingredients.currentIngredients);
+    const isBunAdded = useSelector(store => store.ingredients.isBunAdded);
+    const bun = useSelector(store => store.ingredients.bun);
     const dispatch = useDispatch();
     const [showModal, setShowModal] = useState(false);
     const order = useSelector(store => store.ingredients.order);
     const counterIngredients = useSelector(store => store.ingredients.counterIngredients);
+
+    const moveCard = useCallback((dragIndex, hoverIndex) => {
+        const dragCard = data[dragIndex];
+        const newCards = [...data];
+        newCards.splice(dragIndex, 1);
+        newCards.splice(hoverIndex, 0, dragCard);
+
+        dispatch({
+            type: CHANGE_INGREDIENTS_POSITION,
+            newCards
+        })
+    }, [data]);
 
 
     function showModalWindow(event) {
@@ -116,15 +126,6 @@ const BurgerConstructor = () => {
 
     function closeModalWindow() {
         setShowModal(false)
-    }
-
-    function changeIngredientPosition(toIndex, fromIndex) {
-        let ingredients = data;
-        ingredients.splice(toIndex, 0, ingredients.splice(fromIndex, 1)[0]);
-        dispatch({
-            type: CHANGE_INGREDIENTS_POSITION,
-            ingredients
-        })
     }
 
     function addItem(item) {
@@ -152,7 +153,7 @@ const BurgerConstructor = () => {
         if (item.type === 'bun') {
             let anotherBunIndex = copiedCounterArray.findIndex(elem => elem.type === "bun" && elem.name !== item.name);
             copiedCounterArray[anotherBunIndex]["counter"] = 0
-            count = 1;
+            count = 2;
         } else if (count !== undefined && count >= 1) {
             count = count + 1;
         } else {
@@ -206,7 +207,6 @@ const BurgerConstructor = () => {
         accept: ItemTypes.INGREDIENT,
         drop: (item, monitor) => {
             item.hasOwnProperty('name') && addItem(item);
-            //addItem(item)
 
         },
         collect: monitor => ({
@@ -229,7 +229,7 @@ const BurgerConstructor = () => {
 
             <section className={` ${BurgerConstructorStyle.scrollArea} mt-2 mb-2`} >
                 {data.length > 0 && data.map((item, i) =>
-                    <DraggableIngredient deleteItem={deleteItem} item={item} index={i} array={data} key={i + item._id} changeIngredientPosition={changeIngredientPosition} />)}
+                    <DraggableIngredient moveCard={moveCard} deleteItem={deleteItem} item={item} index={i} key={i + item._id} />)}
             </section>
             {
                 isBunAdded && <div key={'bun-bottom' + bun._id} className={`mt-2 mb-2 ${BurgerConstructorStyle.item} ml-8`} >
@@ -257,10 +257,9 @@ const BurgerConstructor = () => {
 }
 
 DraggableIngredient.propTypes = {
-    item: PropTypes.objectOf(itemObj).isRequired,
-    id: PropTypes.string.isRequired,
+    item: PropTypes.object.isRequired,
     index: PropTypes.number.isRequired,
-    changeIngredientPosition: PropTypes.func.isRequired,
+    moveCard: PropTypes.func.isRequired,
     deleteItem: PropTypes.func.isRequired,
 }
 

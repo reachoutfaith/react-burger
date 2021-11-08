@@ -24,39 +24,50 @@ export function getIngredients() {
         dispatch({
             type: GET_BURGER_INGREDIENTS_REQUEST
         });
-        fetchIngredients().then(res => {
-            if (res && res.success) {
-                dispatch({
-                    type: GET_BURGER_INGREDIENTS_SUCCESS,
-                    ingredients: res.data
-                });
-            } else {
+        fetchIngredients()
+            .then(res => {
+                if (res && res.success) {
+                    dispatch({
+                        type: GET_BURGER_INGREDIENTS_SUCCESS,
+                        ingredients: res.data
+                    });
+                } else {
+                    dispatch({
+                        type: GET_BURGER_INGREDIENTS_ERROR
+                    });
+                }
+            }).catch((err) => {
+                console.log(err)
                 dispatch({
                     type: GET_BURGER_INGREDIENTS_ERROR
                 });
-            }
-        });
+            })
     };
 }
-
 
 export function sendOrderItems(items) {
     return function (dispatch) {
         dispatch({
             type: SEND_ORDER_ITEMS_REQUEST
         });
-        fetchOrderIngredients(items).then(res => {
-            if (res && res.success) {
+        fetchOrderIngredients(items)
+            .then(res => {
+                if (res && res.success) {
+                    dispatch({
+                        type: SEND_ORDER_ITEMS_SUCCESS,
+                        order: res.order
+                    });
+                } else {
+                    dispatch({
+                        type: SEND_ORDER_ITEMS_ERROR
+                    });
+                }
+            }).catch((err) => {
+                console.log(err)
                 dispatch({
-                    type: SEND_ORDER_ITEMS_SUCCESS,
-                    order: res.order
+                    type: GET_BURGER_INGREDIENTS_ERROR
                 });
-            } else {
-                dispatch({
-                    type: SEND_ORDER_ITEMS_ERROR
-                });
-            }
-        });
+            })
     };
 }
 
