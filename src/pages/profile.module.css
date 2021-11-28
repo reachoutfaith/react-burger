@@ -1,0 +1,55 @@
+.wrapper {
+    display: flex;
+    max-width: 1280px;
+    margin: 4rem auto 0rem auto;
+    flex-direction: column;
+}
+
+.profile {
+    display: flex;
+}
+
+.nav {
+    width: 320px;
+}
+
+.list {
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.listItem {
+    height: 64px;
+    transition: all .5s ease;
+    text-decoration: none;
+}
+
+.listItem:hover {
+    color:#fff;
+}
+
+.window {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 480px;
+}
+
+.undertitle {
+    width: 320px;
+}
+
+.buttons {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.error {
+    text-align: center;
+    color: #F44336; 
+}
+
+.activeNavLink {
+    color: #fff;
+}
