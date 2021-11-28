@@ -1,23 +1,44 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import BurgerIngredientsStyle from './burger-ingredients.module.css'
 import { Counter, Tab, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 import PropTypes from 'prop-types';
 import Modal from '../modal/modal';
 import IngredientDetails from '../ingredient-details/ingredient-details';
 import itemObj from '../utils/types';
+import { ItemTypes } from '../utils/ItemTypes';
+import { useDrag } from 'react-dnd';
+import { SHOW_INGREDIENT, DELETE_INGREDIENT } from '../../services/actions/actions';
+import { useSelector, useDispatch } from 'react-redux';
 
 
 function Ingredient(props) {
-    const [count, setCount] = useState(0);
+    let count = 0;
     const item = props.item;
+    const menuCounter = useSelector(store => store.ingredients.counterIngredients);
+    const element = useMemo(() => (menuCounter.filter(elem => elem._id === item._id)), [menuCounter])
+
+    if (element[0]["counter"] !== undefined && element[0]["counter"] >= 1) {
+        count = element[0]["counter"]
+    } else {
+        count = 0
+    }
+
 
     function modifyItem(showModalFunc) {
-        setCount(count => count + 1)
         showModalFunc(item);
     }
 
+    const [{ isDragging }, drag] = useDrag({
+        type: ItemTypes.INGREDIENT,
+        item: item,
+        collect: monitor => ({
+            isDragging: !!monitor.isDragging()
+        })
+    })
+
+
     return (
-        <div className={`${BurgerIngredientsStyle.card}`} onClick={() => { modifyItem(props.showModal) }}>
+        <div ref={drag} className={`${BurgerIngredientsStyle.card}`} onClick={() => { modifyItem(props.showModal) }}>
             {count > 0 && <Counter count={count} size="default" />}
             <img src={item.image} alt={item.name} />
             <span className={`${BurgerIngredientsStyle.price} text text_type_main-default`}>{item.price} <CurrencyIcon type="primary" /></span>
@@ -26,21 +47,67 @@ function Ingredient(props) {
     )
 }
 
-const BurgerIngredients = (props) => {
-    const [current, setCurrent] = React.useState('one')
-    const data = props.data;
+const BurgerIngredients = () => {
+    const [current, setCurrent] = React.useState('one');
+    const data = useSelector(store => store.ingredients.ingredients);
+    const dispatch = useDispatch();
     const buns = [];
     const sauces = [];
     const main = [];
+    const tabsRef = useRef(null);
+    const containerRef = useRef(null);
+    const bunsTitleRef = useRef(null);
+    const saucesTitleRef = useRef(null);
+    const mainTitleRef = useRef(null);
     const [showModal, setShowModal] = useState(false);
-    const [modal, setModal] = useState({});
+    const modal = useSelector(store => store.ingredients.ingredient);
+
+
+
+    useEffect(
+        () => {
+            const startPosition = bunsTitleRef.current.getBoundingClientRect().y;
+            const container = containerRef.current;
+            container.addEventListener('scroll', function () {
+                handleScroll(startPosition)
+            })
+
+            return () => {
+                container.removeEventListener('scroll', function () {
+                    handleScroll(startPosition)
+                })
+            };
+        }, []
+    )
+
+
+    const handleScroll = (start) => {
+        const saucesPosition = saucesTitleRef.current.getBoundingClientRect().y;
+        const mainPosition = mainTitleRef.current.getBoundingClientRect().y;
+
+        if (saucesPosition <= start && mainPosition > start) {
+            setCurrent('two')
+
+        } else if (mainPosition <= start) {
+            setCurrent('three')
+        } else {
+            setCurrent('one')
+        }
+
+    };
 
     function showModalWindow(obj) {
-        setModal(obj);
+        dispatch({
+            type: SHOW_INGREDIENT,
+            ingredient: obj
+        })
         setShowModal(true);
     }
 
     function closeModalWindow() {
+        dispatch({
+            type: DELETE_INGREDIENT
+        })
         setShowModal(false)
     }
 
@@ -61,7 +128,7 @@ const BurgerIngredients = (props) => {
         <section className={`${BurgerIngredientsStyle.wrapper}`}>
             <h1 className={`${BurgerIngredientsStyle.title} text text_type_main-large`}>Соберите бургер</h1>
 
-            <div style={{ display: 'flex' }}>
+            <div style={{ display: 'flex' }} ref={tabsRef}>
                 <Tab value="one" active={current === 'one'} onClick={setCurrent}>
                     Булки
                 </Tab>
@@ -73,16 +140,16 @@ const BurgerIngredients = (props) => {
                     Начинки
                 </Tab>
             </div>
-            <section className={`${BurgerIngredientsStyle.scrollArea}`}>
-                <h2 className={`${BurgerIngredientsStyle.subTitle} text text_type_main-medium`}>Булки</h2>
+            <section ref={containerRef} className={`${BurgerIngredientsStyle.scrollArea}`} >
+                <h2 className={`${BurgerIngredientsStyle.subTitle} text text_type_main-medium`} ref={bunsTitleRef}>Булки</h2>
                 {buns.map((item, index) => (
                     <Ingredient showModal={showModalWindow} item={item} key={index} />
                 ))}
-                <h2 className={`${BurgerIngredientsStyle.subTitle} text text_type_main-medium`}>Соусы</h2>
+                <h2 className={`${BurgerIngredientsStyle.subTitle} text text_type_main-medium`} ref={saucesTitleRef}>Соусы</h2>
                 {sauces.map((item, index) => (
                     <Ingredient showModal={showModalWindow} item={item} key={index} />
                 ))}
-                <h2 className={`${BurgerIngredientsStyle.subTitle} text text_type_main-medium`}>Начинки</h2>
+                <h2 className={`${BurgerIngredientsStyle.subTitle} text text_type_main-medium`} ref={mainTitleRef}>Начинки</h2>
                 {main.map((item, index) => (
                     <Ingredient showModal={showModalWindow} item={item} key={index} />
                 ))}
@@ -95,13 +162,12 @@ const BurgerIngredients = (props) => {
 
 Ingredient.propTypes = {
     item: PropTypes.object.isRequired,
-    showModal: PropTypes.func.isRequired
+    menuCounter: PropTypes.array
 }
 
-
 BurgerIngredients.propTypes = {
-    success: PropTypes.bool.isRequired,
-    data: PropTypes.arrayOf(itemObj).isRequired
+    data: PropTypes.arrayOf(itemObj),
+    modal: PropTypes.object,
 };
 
 
