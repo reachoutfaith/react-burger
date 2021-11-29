@@ -18,10 +18,6 @@
     align-items: center;
 }
 
-.linkActive {
-    color: #fff;
-}
-
 .linkText {
     line-height: 24px;
 }
@@ -35,4 +31,10 @@
 .link svg {
     margin-right: .9rem;
     transition: all .5s ease;
+}
+
+.link:hover,
+.link:hover svg {
+    color: #fff;
+    fill: #fff;
 }
