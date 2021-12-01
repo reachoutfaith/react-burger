@@ -1,4 +1,4 @@
-const store = {
+const initialState = {
     ingredients: [],
     currentIngredients: [],
     ingredient: {},
@@ -12,7 +12,27 @@ const store = {
     sendOrderRequest: false,
     sendOrderSuccess: false,
     sendOrderFailed: false,
-    counterIngredients: []
+    counterIngredients: [],
+    savePasswordRequest: false,
+    savePasswordSuccess: false,
+    savePasswordFailed: false,
+    createUserRequest: false,
+    createUserSuccess: false,
+    createUserFailed: false,
+    loginUserRequest: false,
+    loginUserSuccess: false,
+    loginUserFailed: false,
+    user: {},
+    isAuthenticated: false,
+    errorMessage: '',
+    getUserRequest: false,
+    getUserSuccess: false,
+    getUserFailed: false,
+    updateUserSuccess: false,
+    refreshTokenRequest: false,
+    refreshTokenSuccess: false,
+    refreshTokenFailed: false,
+    logoutSuccess: false
 };
 
-export default store;
+export default initialState;

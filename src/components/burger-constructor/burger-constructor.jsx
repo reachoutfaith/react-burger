@@ -15,8 +15,9 @@ import {
     CHANGE_INGREDIENTS_POSITION,
     ADD_ITEM_TO_COUNTER,
     DELETE_ITEM_FROM_COUNTER
-} from '../../services/actions/actions';
+} from '../../services/actions/ingredients';
 import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 
 const DraggableIngredient = (props) => {
@@ -94,6 +95,9 @@ const BurgerConstructor = () => {
     const [showModal, setShowModal] = useState(false);
     const order = useSelector(store => store.ingredients.order);
     const counterIngredients = useSelector(store => store.ingredients.counterIngredients);
+    const user = useSelector((store) => store.profile.user);
+    const isAuthenticated = useSelector((store) => store.profile.isAuthenticated);
+    const history = useHistory();
 
     const moveCard = useCallback((dragIndex, hoverIndex) => {
         const dragCard = data[dragIndex];
@@ -111,16 +115,22 @@ const BurgerConstructor = () => {
     function showModalWindow(event) {
         event.preventDefault();
         const items = data.map(item => item._id);
+        console.log('isAuthenticated', isAuthenticated)
 
-        if (isBunAdded && items == undefined) {
-            dispatch(sendOrderItems([bun._id]));
-            setShowModal(true)
-        } else if (isBunAdded && items !== undefined) {
-            let elements = items.concat(bun._id)
-            dispatch(sendOrderItems(elements));
-            setShowModal(true)
+        if (!isAuthenticated && Object.keys(user).length <= 0) {
+            history.push({ pathname: '/login' })
+
         } else {
-            alert('Добавьте Булку в Ваш заказ')
+            if (isBunAdded && items == undefined) {
+                dispatch(sendOrderItems([bun._id]));
+                setShowModal(true)
+            } else if (isBunAdded && items !== undefined) {
+                let elements = items.concat(bun._id)
+                dispatch(sendOrderItems(elements));
+                setShowModal(true)
+            } else {
+                alert('Добавьте Булку в Ваш заказ')
+            }
         }
     }
 
@@ -269,7 +279,10 @@ BurgerConstructor.propTypes = {
     isBunAdded: PropTypes.bool,
     bun: PropTypes.object,
     order: PropTypes.object,
-    counterIngredients: PropTypes.arrayOf(itemObj)
+    counterIngredients: PropTypes.arrayOf(itemObj),
+    user: PropTypes.object,
+    isAuthenticated: PropTypes.bool
+
 };
 
 

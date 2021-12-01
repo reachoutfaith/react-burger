@@ -2,18 +2,19 @@ import React, { useEffect, useState, useRef, useMemo } from 'react';
 import BurgerIngredientsStyle from './burger-ingredients.module.css'
 import { Counter, Tab, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 import PropTypes from 'prop-types';
-import Modal from '../modal/modal';
-import IngredientDetails from '../ingredient-details/ingredient-details';
 import itemObj from '../utils/types';
 import { ItemTypes } from '../utils/ItemTypes';
 import { useDrag } from 'react-dnd';
-import { SHOW_INGREDIENT, DELETE_INGREDIENT } from '../../services/actions/actions';
 import { useSelector, useDispatch } from 'react-redux';
+import { useHistory, useLocation } from 'react-router-dom';
 
 
 function Ingredient(props) {
     let count = 0;
     const item = props.item;
+    const dispatch = useDispatch();
+    const history = useHistory();
+    const location = useLocation();
     const menuCounter = useSelector(store => store.ingredients.counterIngredients);
     const element = useMemo(() => (menuCounter.filter(elem => elem._id === item._id)), [menuCounter])
 
@@ -24,21 +25,32 @@ function Ingredient(props) {
     }
 
 
-    function modifyItem(showModalFunc) {
-        showModalFunc(item);
-    }
-
     const [{ isDragging }, drag] = useDrag({
         type: ItemTypes.INGREDIENT,
         item: item,
         collect: monitor => ({
             isDragging: !!monitor.isDragging()
         })
-    })
+    });
 
+    const handleClick = (item) => {
+
+        // dispatch({
+        //     type: SHOW_INGREDIENT,
+        //     ingredient: item
+        // });
+        props.handleModalOpen();
+
+        history.push({
+            pathname: `/ingredients/${item._id}`,
+            state: {
+                background: location
+            }
+        });
+    };
 
     return (
-        <div ref={drag} className={`${BurgerIngredientsStyle.card}`} onClick={() => { modifyItem(props.showModal) }}>
+        <div ref={drag} className={`${BurgerIngredientsStyle.card}`} onClick={() => { handleClick(item) }}>
             {count > 0 && <Counter count={count} size="default" />}
             <img src={item.image} alt={item.name} />
             <span className={`${BurgerIngredientsStyle.price} text text_type_main-default`}>{item.price} <CurrencyIcon type="primary" /></span>
@@ -47,7 +59,7 @@ function Ingredient(props) {
     )
 }
 
-const BurgerIngredients = () => {
+const BurgerIngredients = (props) => {
     const [current, setCurrent] = React.useState('one');
     const data = useSelector(store => store.ingredients.ingredients);
     const dispatch = useDispatch();
@@ -59,10 +71,7 @@ const BurgerIngredients = () => {
     const bunsTitleRef = useRef(null);
     const saucesTitleRef = useRef(null);
     const mainTitleRef = useRef(null);
-    const [showModal, setShowModal] = useState(false);
-    const modal = useSelector(store => store.ingredients.ingredient);
-
-
+    const showModalWindow = props.showModalWindow;
 
     useEffect(
         () => {
@@ -96,20 +105,7 @@ const BurgerIngredients = () => {
 
     };
 
-    function showModalWindow(obj) {
-        dispatch({
-            type: SHOW_INGREDIENT,
-            ingredient: obj
-        })
-        setShowModal(true);
-    }
 
-    function closeModalWindow() {
-        dispatch({
-            type: DELETE_INGREDIENT
-        })
-        setShowModal(false)
-    }
 
     if (data != undefined) {
         data.forEach((item) => {
@@ -143,19 +139,19 @@ const BurgerIngredients = () => {
             <section ref={containerRef} className={`${BurgerIngredientsStyle.scrollArea}`} >
                 <h2 className={`${BurgerIngredientsStyle.subTitle} text text_type_main-medium`} ref={bunsTitleRef}>Булки</h2>
                 {buns.map((item, index) => (
-                    <Ingredient showModal={showModalWindow} item={item} key={index} />
+                    <Ingredient handleModalOpen={showModalWindow} item={item} key={index} />
                 ))}
                 <h2 className={`${BurgerIngredientsStyle.subTitle} text text_type_main-medium`} ref={saucesTitleRef}>Соусы</h2>
                 {sauces.map((item, index) => (
-                    <Ingredient showModal={showModalWindow} item={item} key={index} />
+                    <Ingredient handleModalOpen={showModalWindow} item={item} key={index} />
                 ))}
                 <h2 className={`${BurgerIngredientsStyle.subTitle} text text_type_main-medium`} ref={mainTitleRef}>Начинки</h2>
                 {main.map((item, index) => (
-                    <Ingredient showModal={showModalWindow} item={item} key={index} />
+                    <Ingredient handleModalOpen={showModalWindow} item={item} key={index} />
                 ))}
 
             </section>
-            {showModal && <Modal closeModal={closeModalWindow} title={'Детали ингредиента'}><IngredientDetails {...modal} /></Modal>}
+
         </section >
     )
 }
@@ -167,7 +163,7 @@ Ingredient.propTypes = {
 
 BurgerIngredients.propTypes = {
     data: PropTypes.arrayOf(itemObj),
-    modal: PropTypes.object,
+    showModalWindow: PropTypes.func
 };
 
 

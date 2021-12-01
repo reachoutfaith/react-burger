@@ -1,10 +1,7 @@
-import { combineReducers } from 'redux';
 import {
     GET_BURGER_INGREDIENTS_REQUEST,
     GET_BURGER_INGREDIENTS_SUCCESS,
     GET_BURGER_INGREDIENTS_ERROR,
-    SHOW_INGREDIENT,
-    DELETE_INGREDIENT,
     SEND_ORDER_ITEMS_REQUEST,
     SEND_ORDER_ITEMS_SUCCESS,
     SEND_ORDER_ITEMS_ERROR,
@@ -14,11 +11,12 @@ import {
     CHANGE_INGREDIENTS_POSITION,
     ADD_ITEM_TO_COUNTER,
     DELETE_ITEM_FROM_COUNTER
-} from '../actions/actions';
-import store from '../store'
+} from '../actions/ingredients';
+
+import initialState from '../store';
 
 
-export const ingredientsReducer = (state = store, action) => {
+export const ingredientsReducer = (state = initialState, action) => {
     switch (action.type) {
         case GET_BURGER_INGREDIENTS_REQUEST: {
             return { ...state, ingredientsRequest: true }
@@ -34,12 +32,6 @@ export const ingredientsReducer = (state = store, action) => {
         }
         case GET_BURGER_INGREDIENTS_ERROR: {
             return { ...state, ingredientsFailed: true, ingredientsRequest: false }
-        }
-        case SHOW_INGREDIENT: {
-            return { ...state, ingredient: action.ingredient }
-        }
-        case DELETE_INGREDIENT: {
-            return { ...state, ingredient: {} }
         }
         case ADD_ITEM_TO_COUNTER: {
             return {
@@ -106,6 +98,5 @@ export const ingredientsReducer = (state = store, action) => {
 }
 
 
-export const rootReducer = combineReducers({
-    ingredients: ingredientsReducer
-});
+
+
