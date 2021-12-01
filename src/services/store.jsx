@@ -1,4 +1,4 @@
-const store = {
+const initialState = {
     ingredients: [],
     currentIngredients: [],
     ingredient: {},
@@ -35,4 +35,4 @@ const store = {
     logoutSuccess: false
 };
 
-export default store;
+export default initialState;

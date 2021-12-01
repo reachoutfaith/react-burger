@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Switch, Route, useHistory, useLocation, Redirect } from 'react-router-dom';
 import AppHeader from '../app-header/app-header';
 import { useDispatch } from 'react-redux';
-import { getIngredients } from '../../services/actions/actions';
+import { getIngredients } from '../../services/actions/ingredients';
 import LoginPage from '../../pages/login';
 import RegisterPage from '../../pages/register';
 import ForgotPasswordPage from '../../pages/forgot-password';
@@ -13,13 +13,15 @@ import NotFound404 from '../../pages/not-found-404';
 import ProtectedRoute from '../app/protected-route'
 import Modal from '../modal/modal';
 import IngredientDetails from '../ingredient-details/ingredient-details';
-import { DELETE_INGREDIENT, refreshTokenThunk } from '../../services/actions/actions';
+import { refreshTokenThunk } from '../../services/actions/user';
 
 function App() {
 
   const dispatch = useDispatch();
   const history = useHistory();
   const [showModal, setShowModal] = useState(false);
+  const location = useLocation();
+  let background = location.state && location.state.background;
 
   const uploadUserData = useCallback(
     () => {
@@ -32,10 +34,6 @@ function App() {
 
 
   function closeModalWindow() {
-    console.log('i am here')
-    dispatch({
-      type: DELETE_INGREDIENT
-    })
     setShowModal(false);
     history.replace('/');
   }
@@ -44,14 +42,17 @@ function App() {
     () => {
       dispatch(getIngredients());
       uploadUserData();
+
     }, [dispatch, uploadUserData]
   )
-
 
   return (
     <>
       <AppHeader />
-      <Switch >
+      {background && <Route
+        path='/ingredients/:id'
+        children={<Modal closeModal={closeModalWindow} title={'Детали ингредиента'}><IngredientDetails /></Modal>} />}
+      <Switch location={background || location}>
         <Route path="/" exact={true}>
           <BurgerConstructorPage handleModalOpen={showModalWindow} />
         </Route>
@@ -70,23 +71,13 @@ function App() {
         <ProtectedRoute path="/profile" exact={true} >
           <ProfilePage />
         </ProtectedRoute>
-
-        <Route path='/ingredients/:id'
-          render={({ location: { state } }) => !state?.fromSite &&
-            <IngredientDetails />} />
+        <Route path='/ingredients/:id' children={<IngredientDetails />} />
         <Route >
           <NotFound404 />
         </Route>
       </Switch>
       {/* modal */}
-      <Route
-        path='/ingredients/:id'
-        render={({ location: { state } }) =>
-          state?.fromSite && (
-            <Modal closeModal={closeModalWindow} title={'Детали ингредиента'}><IngredientDetails /></Modal>
-          )
-        }
-      />
+
 
       {/* {showModal && (
         <Modal closeModal={closeModalWindow} title={'Детали ингредиента'} showModal={showModal}>

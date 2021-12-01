@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useHistory, Redirect, useLocation } from 'react-router-dom';
-import { createUserThunk } from '../services/actions/actions';
+import { createUserThunk } from '../services/actions/user';
 import style from './login.module.css';
 import { Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import { useSelector, useDispatch } from 'react-redux';
@@ -44,7 +44,7 @@ const RegisterPage = () => {
         <div className={`${style.wrapper}`}>
             <h1 className={`text text_type_main-medium mb-6 ${style.title}`}>Регистрация</h1>
             {hasError && <span className={`mt-4 mb-4 text text_type_main-default ${style.error}`}>{error}</span>}
-            <form action="" className={`${style.form}`}>
+            <form action="" className={`${style.form}`} onSubmit={createUser}>
                 <div className="mb-6">
                     <NameInput onChange={onChange} value={form.name} name={'name'} />
                 </div>
@@ -55,7 +55,7 @@ const RegisterPage = () => {
                     <PasswordInput onChange={onChange} value={form.password} name={'password'} />
                 </div>
                 <div className="mb-20">
-                    <Button className={`${style.button}`} type="primary" size="medium" onClick={createUser}>Зарегистрироваться</Button>
+                    <Button className={`${style.button}`} type="primary" size="medium" >Зарегистрироваться</Button>
                 </div>
             </form>
             <div className={` ${style.text__wrapper} mb-4`}>
@@ -74,7 +74,7 @@ const RegisterPage = () => {
 RegisterPage.propTypes = {
     hasError: PropTypes.bool,
     error: PropTypes.string,
-    isAuthenticated: PropTypes.bool.isRequired
+    isAuthenticated: PropTypes.bool
 }
 
 export default RegisterPage;

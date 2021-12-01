@@ -2,10 +2,10 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import style from './profile.module.css';
 import { Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import { useDispatch, useSelector } from 'react-redux';
-import { LOGOUT_SUCCESS, refreshTokenThunk } from '../services/actions/actions'
+import { LOGOUT_SUCCESS, refreshTokenThunk } from '../services/actions/user'
 import { getUserInfo, updateUser, logoutUser } from '../services/API';
 import { useHistory, NavLink } from 'react-router-dom';
-import { GET_USER_SUCCESS, UPDATE_USER_ERROR, UPDATE_USER_SUCCESS } from '../services/actions/actions'
+import { GET_USER_SUCCESS, UPDATE_USER_ERROR, UPDATE_USER_SUCCESS } from '../services/actions/user'
 import { deleteCookie } from '../services/utils';
 import { PasswordInput } from '../components/custom/input/password-input';
 import { EmailInput } from '../components/custom/input/email-input';
@@ -178,7 +178,7 @@ const ProfilePage = () => {
 
 ProfilePage.propTypes = {
     user: PropTypes.object,
-    failedLogged: PropTypes.bool.isRequired,
+    failedLogged: PropTypes.bool,
     hasError: PropTypes.bool,
     error: PropTypes.string
 }

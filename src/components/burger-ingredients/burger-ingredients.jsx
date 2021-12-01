@@ -5,9 +5,8 @@ import PropTypes from 'prop-types';
 import itemObj from '../utils/types';
 import { ItemTypes } from '../utils/ItemTypes';
 import { useDrag } from 'react-dnd';
-import { SHOW_INGREDIENT } from '../../services/actions/actions';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 
 
 function Ingredient(props) {
@@ -15,6 +14,7 @@ function Ingredient(props) {
     const item = props.item;
     const dispatch = useDispatch();
     const history = useHistory();
+    const location = useLocation();
     const menuCounter = useSelector(store => store.ingredients.counterIngredients);
     const element = useMemo(() => (menuCounter.filter(elem => elem._id === item._id)), [menuCounter])
 
@@ -35,16 +35,19 @@ function Ingredient(props) {
 
     const handleClick = (item) => {
 
-        dispatch({
-            type: SHOW_INGREDIENT,
-            ingredient: item
-        })
-        history.replace({
+        // dispatch({
+        //     type: SHOW_INGREDIENT,
+        //     ingredient: item
+        // });
+        props.handleModalOpen();
+
+        history.push({
             pathname: `/ingredients/${item._id}`,
-            state: { fromSite: true }
+            state: {
+                background: location
+            }
         });
     };
-
 
     return (
         <div ref={drag} className={`${BurgerIngredientsStyle.card}`} onClick={() => { handleClick(item) }}>
@@ -56,7 +59,7 @@ function Ingredient(props) {
     )
 }
 
-const BurgerIngredients = () => {
+const BurgerIngredients = (props) => {
     const [current, setCurrent] = React.useState('one');
     const data = useSelector(store => store.ingredients.ingredients);
     const dispatch = useDispatch();
@@ -68,9 +71,7 @@ const BurgerIngredients = () => {
     const bunsTitleRef = useRef(null);
     const saucesTitleRef = useRef(null);
     const mainTitleRef = useRef(null);
-
-
-
+    const showModalWindow = props.showModalWindow;
 
     useEffect(
         () => {
@@ -138,15 +139,15 @@ const BurgerIngredients = () => {
             <section ref={containerRef} className={`${BurgerIngredientsStyle.scrollArea}`} >
                 <h2 className={`${BurgerIngredientsStyle.subTitle} text text_type_main-medium`} ref={bunsTitleRef}>Булки</h2>
                 {buns.map((item, index) => (
-                    <Ingredient item={item} key={index} />
+                    <Ingredient handleModalOpen={showModalWindow} item={item} key={index} />
                 ))}
                 <h2 className={`${BurgerIngredientsStyle.subTitle} text text_type_main-medium`} ref={saucesTitleRef}>Соусы</h2>
                 {sauces.map((item, index) => (
-                    <Ingredient item={item} key={index} />
+                    <Ingredient handleModalOpen={showModalWindow} item={item} key={index} />
                 ))}
                 <h2 className={`${BurgerIngredientsStyle.subTitle} text text_type_main-medium`} ref={mainTitleRef}>Начинки</h2>
                 {main.map((item, index) => (
-                    <Ingredient item={item} key={index} />
+                    <Ingredient handleModalOpen={showModalWindow} item={item} key={index} />
                 ))}
 
             </section>
@@ -161,7 +162,8 @@ Ingredient.propTypes = {
 }
 
 BurgerIngredients.propTypes = {
-    data: PropTypes.arrayOf(itemObj)
+    data: PropTypes.arrayOf(itemObj),
+    showModalWindow: PropTypes.func
 };
 
 

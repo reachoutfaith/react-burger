@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useHistory, Redirect, useLocation } from 'react-router-dom';
-import { savePasswordThunk } from '../services/actions/actions';
+import { savePasswordThunk } from '../services/actions/user';
 import style from './login.module.css';
 import { Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import { useSelector, useDispatch } from 'react-redux';
@@ -43,7 +43,7 @@ const ResetPasswordPage = () => {
         <div className={`${style.wrapper}`}>
             <h1 className={`text text_type_main-medium mb-6 ${style.title}`}>Создание нового пароля</h1>
             {hasError && <span className={`mt-4 mb-4 text text_type_main-default ${style.error}`}>{error}</span>}
-            <form action="" className={`${style.form}`}>
+            <form action="" className={`${style.form}`} onSubmit={saveNewPassword}>
                 <div className="mb-6">
                     <PasswordInput placeholder={'Введите новый пароль'} onChange={onChange} value={form.password} name={'password'} />
                 </div>
@@ -51,7 +51,7 @@ const ResetPasswordPage = () => {
                     <NameInput onChange={onChange} value={form.token} name={'token'} placeholder={'Введите код из письма'} />
                 </div>
                 <div className="mb-20">
-                    <Button className={`${style.button}`} type="primary" size="medium" onClick={saveNewPassword}>Сохранить</Button>
+                    <Button className={`${style.button}`} type="primary" size="medium" >Сохранить</Button>
                 </div>
             </form>
             <div className={` ${style.text__wrapper} mb-4`}>
@@ -69,7 +69,7 @@ const ResetPasswordPage = () => {
 ResetPasswordPage.propTypes = {
     hasError: PropTypes.bool,
     error: PropTypes.string,
-    isAuthenticated: PropTypes.bool.isRequired
+    isAuthenticated: PropTypes.bool
 }
 
 export default ResetPasswordPage;

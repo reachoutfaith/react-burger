@@ -15,7 +15,7 @@ import {
     CHANGE_INGREDIENTS_POSITION,
     ADD_ITEM_TO_COUNTER,
     DELETE_ITEM_FROM_COUNTER
-} from '../../services/actions/actions';
+} from '../../services/actions/ingredients';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
@@ -115,8 +115,9 @@ const BurgerConstructor = () => {
     function showModalWindow(event) {
         event.preventDefault();
         const items = data.map(item => item._id);
+        console.log('isAuthenticated', isAuthenticated)
 
-        if (!isAuthenticated && Object.keys(user).length < 0) {
+        if (!isAuthenticated && Object.keys(user).length <= 0) {
             history.push({ pathname: '/login' })
 
         } else {

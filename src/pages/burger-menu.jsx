@@ -4,15 +4,21 @@ import BurgerIngredients from '../components/burger-ingredients/burger-ingredien
 import BurgerConstructor from '../components/burger-constructor/burger-constructor';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import PropTypes from 'prop-types';
 
-const BurgerConstructorPage = () => {
+const BurgerConstructorPage = (props) => {
+    const showModalWindow = props.handleModalOpen;
 
     return (<main className={`${AppStyle.main}`}>
         <DndProvider backend={HTML5Backend}>
-            <BurgerIngredients />
+            <BurgerIngredients showModalWindow={showModalWindow} />
             <BurgerConstructor />
         </DndProvider>
     </main>)
+}
+
+BurgerConstructorPage.propTypes = {
+    showModalWindow: PropTypes.func
 }
 
 export default BurgerConstructorPage;

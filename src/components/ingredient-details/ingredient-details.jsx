@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import IngredientDetailsStyle from './ingredient-details.module.css';
 import PropTypes from 'prop-types';
 import itemObj from '../utils/types';
@@ -6,26 +6,26 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useParams, Redirect, useLocation } from 'react-router-dom';
 
 const IngredientDetails = () => {
-    const item = useSelector(store => store.ingredients.ingredient);
-    const location = useLocation();
+
     const { id } = useParams();
     const data = useSelector((store) => store.ingredients.ingredients);
+    const isLoading = useSelector((store) => store.ingredients)
 
     const currentIngredient = useMemo(() => {
         return data.find(item => item._id === id);
     }, [data]);
 
 
-    if (!item || !currentIngredient) {
+    if (!isLoading) {
         return null
     }
 
-    if (!item && !currentIngredient) {
-        return <Redirect to='/' />
-    };
+    if (!currentIngredient) {
+        return <div>Wait a little bit</div>
+    }
 
     return (
-        <div className={IngredientDetailsStyle.container} style={{ height: `${!location.state?.fromSite && '80vh'}` }}>
+        <div className={IngredientDetailsStyle.container} >
             <img className={`${IngredientDetailsStyle.image} mb-4`} src={currentIngredient["image_large"]} alt={currentIngredient.name} />
             <h1 className={`${IngredientDetailsStyle.title} text text_type_main-large`}>{currentIngredient.name}</h1>
             <div className={`${IngredientDetailsStyle.nutrients} mt-8`}>

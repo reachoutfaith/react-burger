@@ -26,8 +26,9 @@ const ForgotPasswordPage = () => {
             const data = await resetPasswordRequest(form);
 
             if (data.success === true) {
+
                 setIsReset(true);
-                history.replace({ pathname: '/login' })
+                history.push({ pathname: '/reset-password' })
             } else {
                 setIsReset(false);
                 setError(data.message);
@@ -37,6 +38,7 @@ const ForgotPasswordPage = () => {
     )
 
     const login = useCallback(() => {
+
         history.replace({ pathname: '/login' })
     }, [history]);
 
@@ -47,7 +49,7 @@ const ForgotPasswordPage = () => {
 
     return (
         <>
-            <div className={`${style.wrapper}`}>
+            <div className={`${style.wrapper}`} onSubmit={resetPassword}>
                 <h1 className={`text text_type_main-medium mb-6 ${style.title}`}>Восстановление пароля</h1>
                 {hasError && <span className={`mt-4 mb-4 text text_type_main-default ${style.error}`}>{error}</span>}
                 <form action="" className={`${style.form}`}>
@@ -55,7 +57,7 @@ const ForgotPasswordPage = () => {
                         <EmailInput onChange={onChange} value={form.email} name={'email'} />
                     </div>
                     <div className="mb-20">
-                        <Button className={`${style.button}`} type="primary" size="medium" onClick={resetPassword}>Восстановить</Button>
+                        <Button className={`${style.button}`} type="primary" size="medium" >Восстановить</Button>
                     </div>
                 </form>
                 <div className={` ${style.text__wrapper} mb-4`}>
@@ -74,7 +76,7 @@ const ForgotPasswordPage = () => {
 }
 
 ForgotPasswordPage.propTypes = {
-    isAuthenticated: PropTypes.bool.isRequired
+    isAuthenticated: PropTypes.bool
 }
 
 export default ForgotPasswordPage;

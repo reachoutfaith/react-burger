@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom';
 import { CloseIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 import ModalStyle from '../modal/modal.module.css';
 import PropTypes from 'prop-types';
