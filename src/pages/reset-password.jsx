@@ -37,7 +37,9 @@ const ResetPasswordPage = () => {
         return <Redirect to={location.state?.from || '/'} />;
     }
 
-
+    if (!location.state?.resetPasswordRequest) {
+        return <Redirect to={'/forgot-password'} />
+    }
 
     return (
         <div className={`${style.wrapper}`}>

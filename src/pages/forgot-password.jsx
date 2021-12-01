@@ -28,7 +28,7 @@ const ForgotPasswordPage = () => {
             if (data.success === true) {
 
                 setIsReset(true);
-                history.push({ pathname: '/reset-password' })
+                history.push('/reset-password', { resetPasswordRequest: true })
             } else {
                 setIsReset(false);
                 setError(data.message);
@@ -49,10 +49,10 @@ const ForgotPasswordPage = () => {
 
     return (
         <>
-            <div className={`${style.wrapper}`} onSubmit={resetPassword}>
+            <div className={`${style.wrapper}`} >
                 <h1 className={`text text_type_main-medium mb-6 ${style.title}`}>Восстановление пароля</h1>
                 {hasError && <span className={`mt-4 mb-4 text text_type_main-default ${style.error}`}>{error}</span>}
-                <form action="" className={`${style.form}`}>
+                <form action="" className={`${style.form}`} onSubmit={resetPassword}>
                     <div className="mb-6">
                         <EmailInput onChange={onChange} value={form.email} name={'email'} />
                     </div>
