@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useState, useCallback, FC } from 'react';
 import { useHistory, Redirect, useLocation } from 'react-router-dom';
 import { createUserThunk } from '../services/actions/user';
 import style from './login.module.css';
@@ -7,19 +7,24 @@ import { useSelector, useDispatch } from 'react-redux';
 import { PasswordInput } from '../components/custom/input/password-input';
 import { EmailInput } from '../components/custom/input/email-input';
 import { NameInput } from '../components/custom/input/name-input';
-import PropTypes from 'prop-types';
+import { Location } from "history";
+import { IFormProps } from '../components/utils/types'
 
-const RegisterPage = () => {
-    const [form, setValue] = useState({ email: '', password: '', name: '' });
-    const location = useLocation();
+interface IRegisterProps extends IFormProps {
+    password: string;
+}
+
+const RegisterPage: FC = () => {
+    const [form, setValue] = useState<IRegisterProps>({ email: '', password: '', name: '' });
+    const location = useLocation<{ from?: Location<{} | null | undefined> }>();
     const history = useHistory();
     const dispatch = useDispatch();
-    const hasError = useSelector(store => store.profile.createUserFailed);
-    const error = useSelector(store => store.profile.errorMessage);
-    const isAuthenticated = useSelector(store => store.profile.isAuthenticated);
+    const hasError = useSelector((store: any) => store.profile.createUserFailed);
+    const error = useSelector((store: any) => store.profile.errorMessage);
+    const isAuthenticated = useSelector((store: any) => store.profile.isAuthenticated);
 
 
-    const onChange = e => {
+    const onChange = (e: any) => {
         setValue({ ...form, [e.target.name]: e.target.value });
     };
 
@@ -55,7 +60,7 @@ const RegisterPage = () => {
                     <PasswordInput onChange={onChange} value={form.password} name={'password'} />
                 </div>
                 <div className="mb-20">
-                    <Button className={`${style.button}`} type="primary" size="medium" >Зарегистрироваться</Button>
+                    <Button type="primary" size="medium" >Зарегистрироваться</Button>
                 </div>
             </form>
             <div className={` ${style.text__wrapper} mb-4`}>
@@ -69,12 +74,6 @@ const RegisterPage = () => {
             </div>
         </div >
     )
-}
-
-RegisterPage.propTypes = {
-    hasError: PropTypes.bool,
-    error: PropTypes.string,
-    isAuthenticated: PropTypes.bool
 }
 
 export default RegisterPage;

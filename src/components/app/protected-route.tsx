@@ -1,11 +1,17 @@
+import React, { FC } from 'react';
 import { Route, Redirect, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
+interface IProtectedRouteProps {
+    children: React.ReactElement;
+    path: string;
+    exact: boolean;
+}
 
-function ProtectedRoute({ children, ...rest }) {
+const ProtectedRoute: FC<IProtectedRouteProps> = ({ children, ...rest }) => {
 
     const location = useLocation();
-    const user = useSelector((store) => store.profile.user);
+    const user = useSelector((store: any) => store.profile.user);
 
     return (
         <Route

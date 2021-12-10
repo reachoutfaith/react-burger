@@ -1,32 +1,36 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useCallback, FC } from 'react';
 import { useHistory, Redirect, useLocation } from 'react-router-dom';
 import { resetPasswordRequest } from '../services/API';
 import style from './login.module.css';
 import { Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import { useSelector } from 'react-redux';
 import { EmailInput } from '../components/custom/input/email-input';
-import PropTypes from 'prop-types';
+import { Location } from "history";
+import { IFetchResponse } from '../components/utils/types'
 
-const ForgotPasswordPage = () => {
-    const [form, setValue] = useState({ email: '' });
+type TEmail = {
+    email: string
+}
+
+const ForgotPasswordPage: FC = () => {
+    const [form, setValue] = useState<TEmail>({ email: '' });
     const history = useHistory();
-    const location = useLocation();
-    const [isReset, setIsReset] = useState(false);
-    const [hasError, setHasError] = useState(false);
-    const [error, setError] = useState('');
-    const isAuthenticated = useSelector(store => store.profile.isAuthenticated);
+    const location = useLocation<{ from?: Location<{} | null | undefined> }>();
+    const [isReset, setIsReset] = useState<boolean>(false);
+    const [hasError, setHasError] = useState<boolean>(false);
+    const [error, setError] = useState<string>('');
+    const isAuthenticated = useSelector((store: any) => store.profile.isAuthenticated);
 
-    const onChange = e => {
+    const onChange = (e: any) => {
         setValue({ email: e.target.value });
     };
 
     const resetPassword = useCallback(
-        async (e) => {
+        async (e: any) => {
             e.preventDefault();
-            const data = await resetPasswordRequest(form);
+            const data: IFetchResponse<JSON> = await resetPasswordRequest(form);
 
             if (data.success === true) {
-
                 setIsReset(true);
                 history.push('/reset-password', { resetPasswordRequest: true })
             } else {
@@ -57,7 +61,7 @@ const ForgotPasswordPage = () => {
                         <EmailInput onChange={onChange} value={form.email} name={'email'} />
                     </div>
                     <div className="mb-20">
-                        <Button className={`${style.button}`} type="primary" size="medium" >Восстановить</Button>
+                        <Button type="primary" size="medium" >Восстановить</Button>
                     </div>
                 </form>
                 <div className={` ${style.text__wrapper} mb-4`}>
@@ -73,10 +77,6 @@ const ForgotPasswordPage = () => {
     )
 
 
-}
-
-ForgotPasswordPage.propTypes = {
-    isAuthenticated: PropTypes.bool
 }
 
 export default ForgotPasswordPage;

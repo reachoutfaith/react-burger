@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Switch, Route, useHistory, useLocation, Redirect } from 'react-router-dom';
+import React, { useCallback, useEffect, useState, FC } from 'react';
+import { Switch, Route, useHistory, useLocation } from 'react-router-dom';
+import { Location } from "history";
 import AppHeader from '../app-header/app-header';
 import { useDispatch } from 'react-redux';
 import { getIngredients } from '../../services/actions/ingredients';
@@ -10,18 +11,18 @@ import ResetPasswordPage from '../../pages/reset-password';
 import ProfilePage from '../../pages/profile';
 import BurgerConstructorPage from '../../pages/burger-menu';
 import NotFound404 from '../../pages/not-found-404';
-import ProtectedRoute from '../app/protected-route'
+import ProtectedRoute from './protected-route'
 import Modal from '../modal/modal';
 import IngredientDetails from '../ingredient-details/ingredient-details';
 import { refreshTokenThunk } from '../../services/actions/user';
 
-function App() {
+const App: FC = () => {
 
   const dispatch = useDispatch();
   const history = useHistory();
-  const [showModal, setShowModal] = useState(false);
-  const location = useLocation();
-  let background = location.state && location.state.background;
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const location = useLocation<{ background?: Location<{} | null | undefined> }>();
+  let background = location.state?.background;
 
   const uploadUserData = useCallback(
     () => {
@@ -54,7 +55,7 @@ function App() {
         children={<Modal closeModal={closeModalWindow} title={'Детали ингредиента'}><IngredientDetails /></Modal>} />}
       <Switch location={background || location}>
         <Route path="/" exact={true}>
-          <BurgerConstructorPage handleModalOpen={showModalWindow} />
+          <BurgerConstructorPage handleOpenModal={showModalWindow} />
         </Route>
         <Route path="/login" exact={true}  >
           <LoginPage />

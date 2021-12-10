@@ -1,12 +1,11 @@
-import React, { useState, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useRef, useCallback, FC } from 'react';
 import BurgerConstructorStyle from './burger-constructor.module.css'
 import { ConstructorElement, CurrencyIcon, Button, DragIcon } from '@ya.praktikum/react-developer-burger-ui-components';
-import PropTypes from 'prop-types';
+import { TItem } from '../utils/types';
 import Modal from '../modal/modal';
 import OrderDetails from '../order-details/OrderDetails';
-import itemObj from '../utils/types';
 import { ItemTypes } from '../utils/ItemTypes';
-import { useDrop, useDrag } from 'react-dnd';
+import { useDrop, useDrag, DropTargetMonitor } from 'react-dnd';
 import {
     sendOrderItems,
     DELETE_BURGER_INGREDIENT,
@@ -19,14 +18,42 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
+export interface IIngredientProps {
+    item: TItem;
+    id?: string;
+    index: number;
+    deleteItem: Function;
+    moveCard: Function;
+}
 
-const DraggableIngredient = (props) => {
-    const item = props.item;
-    const id = props.item._id;
-    const index = props.index;
-    const ref = useRef(null);
-    const deleteItem = props.deleteItem;
-    const moveCard = props.moveCard;
+export interface CardProps {
+    id?: any
+    text: string
+    index: number
+    moveCard: (dragIndex: number, hoverIndex: number) => void
+}
+
+export interface DragItem {
+    index: number
+    id: string
+    type: string
+}
+
+export interface ClientOffset {
+    x: number;
+    y: number;
+}
+
+export type TItemCopied = TItem & { counter?: number; }
+
+
+const DraggableIngredient: FC<IIngredientProps> = ({ item, id, index, deleteItem, moveCard }) => {
+    // const item = props.item;
+    // const id = props.item._id;
+    // const index = props.index;
+    const ref = useRef<HTMLDivElement>(null);
+    //const deleteItem = props.deleteItem;
+    //const moveCard = props.moveCard;
 
     const [{ handlerId }, drop] = useDrop({
         accept: ItemTypes.INGREDIENT,
@@ -35,7 +62,7 @@ const DraggableIngredient = (props) => {
                 handlerId: monitor.getHandlerId(),
             };
         },
-        hover(item, monitor) {
+        hover(item: DragItem, monitor: DropTargetMonitor) {
             if (!ref.current) {
                 return;
             }
@@ -49,7 +76,7 @@ const DraggableIngredient = (props) => {
             const hoverBoundingRect = ref.current?.getBoundingClientRect();
             const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
             const clientOffset = monitor.getClientOffset();
-            const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+            const hoverClientY = (clientOffset as ClientOffset).y - hoverBoundingRect.top;
             if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
                 return;
             }
@@ -67,7 +94,7 @@ const DraggableIngredient = (props) => {
         item: () => {
             return { id, index };
         },
-        collect: (monitor) => ({
+        collect: (monitor: any) => ({
             isDragging: monitor.isDragging(),
         }),
     });
@@ -75,8 +102,8 @@ const DraggableIngredient = (props) => {
     drag(drop(ref));
 
     return (
-        <div ref={ref} data-handler-id={handlerId} style={{ opacity }} index={index} id={item._id} onClick={() => deleteItem(item)} className={`mt-2 mb-2 ${BurgerConstructorStyle.item}`} >
-            <DragIcon />
+        <div ref={ref} data-handler-id={handlerId} style={{ opacity }} id={item._id} onClick={() => deleteItem(item)} className={`mt-2 mb-2 ${BurgerConstructorStyle.item}`} >
+            <DragIcon type="primary" />
             <ConstructorElement
                 isLocked={false}
                 text={item.name}
@@ -86,20 +113,21 @@ const DraggableIngredient = (props) => {
         </div>)
 }
 
-const BurgerConstructor = () => {
-    const totalPrice = useSelector(store => store.ingredients.totalPrice);
-    const data = useSelector(store => store.ingredients.currentIngredients);
-    const isBunAdded = useSelector(store => store.ingredients.isBunAdded);
-    const bun = useSelector(store => store.ingredients.bun);
+
+const BurgerConstructor: FC = () => {
+    const totalPrice = useSelector((store: any) => store.ingredients.totalPrice);
+    const data = useSelector((store: any) => store.ingredients.currentIngredients);
+    const isBunAdded = useSelector((store: any) => store.ingredients.isBunAdded);
+    const bun = useSelector((store: any) => store.ingredients.bun);
     const dispatch = useDispatch();
-    const [showModal, setShowModal] = useState(false);
-    const order = useSelector(store => store.ingredients.order);
-    const counterIngredients = useSelector(store => store.ingredients.counterIngredients);
-    const user = useSelector((store) => store.profile.user);
-    const isAuthenticated = useSelector((store) => store.profile.isAuthenticated);
+    const [showModal, setShowModal] = useState<boolean>(false);
+    const order = useSelector((store: any) => store.ingredients.order);
+    const counterIngredients = useSelector((store: any) => store.ingredients.counterIngredients);
+    const user = useSelector((store: any) => store.profile.user);
+    const isAuthenticated = useSelector((store: any) => store.profile.isAuthenticated);
     const history = useHistory();
 
-    const moveCard = useCallback((dragIndex, hoverIndex) => {
+    const moveCard = useCallback((dragIndex: number, hoverIndex: number) => {
         const dragCard = data[dragIndex];
         const newCards = [...data];
         newCards.splice(dragIndex, 1);
@@ -112,20 +140,18 @@ const BurgerConstructor = () => {
     }, [data]);
 
 
-    function showModalWindow(event) {
+    function showModalWindow(event: any) {
         event.preventDefault();
-        const items = data.map(item => item._id);
-        console.log('isAuthenticated', isAuthenticated)
+        const items = data.map((item: TItem) => item._id);
 
         if (!isAuthenticated && Object.keys(user).length <= 0) {
             history.push({ pathname: '/login' })
-
         } else {
             if (isBunAdded && items == undefined) {
                 dispatch(sendOrderItems([bun._id]));
                 setShowModal(true)
             } else if (isBunAdded && items !== undefined) {
-                let elements = items.concat(bun._id)
+                let elements: string[] = items.concat(bun._id)
                 dispatch(sendOrderItems(elements));
                 setShowModal(true)
             } else {
@@ -138,7 +164,7 @@ const BurgerConstructor = () => {
         setShowModal(false)
     }
 
-    function addItem(item) {
+    function addItem(item: TItem) {
 
         if (item.type === 'bun') {
             dispatch({
@@ -155,10 +181,10 @@ const BurgerConstructor = () => {
         increaseCounter(item)
     }
 
-    function increaseCounter(item) {
-        let copiedCounterArray = [...counterIngredients];
+    function increaseCounter(item: TItem) {
+        let copiedCounterArray: TItemCopied[] = [...counterIngredients];
         const index = copiedCounterArray.findIndex(elem => elem._id === item._id);
-        let count = copiedCounterArray[index]["counter"];
+        let count: number | undefined = copiedCounterArray[index]["counter"];
 
         if (item.type === 'bun') {
             let anotherBunIndex = copiedCounterArray.findIndex(elem => elem.type === "bun" && elem.name !== item.name);
@@ -182,8 +208,8 @@ const BurgerConstructor = () => {
 
     }
 
-    function deleteItem(item) {
-        let elemIndex = data.findIndex(elem => elem._id === item._id);
+    function deleteItem(item: TItem) {
+        let elemIndex: number = data.findIndex((elem: TItem) => elem._id === item._id);
         dispatch({
             type: DELETE_BURGER_INGREDIENT,
             item,
@@ -193,10 +219,10 @@ const BurgerConstructor = () => {
         decreaseCounter(item);
     }
 
-    function decreaseCounter(item) {
+    function decreaseCounter(item: TItem) {
         let copiedCounterArray = [...counterIngredients];
-        const index = copiedCounterArray.findIndex(elem => elem._id === item._id);
-        let count = copiedCounterArray[index]["counter"];
+        const index = copiedCounterArray.findIndex((elem: TItem) => elem._id === item._id);
+        let count: number = copiedCounterArray[index]["counter"];
         let newCount = count - 1
 
         copiedCounterArray[index] = {
@@ -215,11 +241,10 @@ const BurgerConstructor = () => {
 
     const [{ isOver }, drop] = useDrop({
         accept: ItemTypes.INGREDIENT,
-        drop: (item, monitor) => {
+        drop: (item: TItem, monitor: any) => {
             item.hasOwnProperty('name') && addItem(item);
-
         },
-        collect: monitor => ({
+        collect: (monitor: any) => ({
             isOver: !!monitor.isOver()
         })
     })
@@ -230,7 +255,7 @@ const BurgerConstructor = () => {
             {isBunAdded && <div key={'bun-top' + bun._id} className={`mt-2 mb-2 ${BurgerConstructorStyle.item} ml-8`} >
                 <ConstructorElement
                     type="top"
-                    isLocked="true"
+                    isLocked={true}
                     text={`${bun.name} (верх)`}
                     price={bun.price}
                     thumbnail={bun.image}
@@ -238,14 +263,14 @@ const BurgerConstructor = () => {
             </div>}
 
             <section className={` ${BurgerConstructorStyle.scrollArea} mt-2 mb-2`} >
-                {data.length > 0 && data.map((item, i) =>
+                {data.length > 0 && data.map((item: TItem, i: number) =>
                     <DraggableIngredient moveCard={moveCard} deleteItem={deleteItem} item={item} index={i} key={i + item._id} />)}
             </section>
             {
                 isBunAdded && <div key={'bun-bottom' + bun._id} className={`mt-2 mb-2 ${BurgerConstructorStyle.item} ml-8`} >
                     <ConstructorElement
                         type="bottom"
-                        isLocked="true"
+                        isLocked={true}
                         text={`${bun.name} (низ)`}
                         price={bun.price}
                         thumbnail={bun.image}
@@ -265,25 +290,6 @@ const BurgerConstructor = () => {
         </div >
     )
 }
-
-DraggableIngredient.propTypes = {
-    item: PropTypes.object.isRequired,
-    index: PropTypes.number.isRequired,
-    moveCard: PropTypes.func.isRequired,
-    deleteItem: PropTypes.func.isRequired,
-}
-
-BurgerConstructor.propTypes = {
-    totalPrice: PropTypes.number,
-    data: PropTypes.arrayOf(itemObj),
-    isBunAdded: PropTypes.bool,
-    bun: PropTypes.object,
-    order: PropTypes.object,
-    counterIngredients: PropTypes.arrayOf(itemObj),
-    user: PropTypes.object,
-    isAuthenticated: PropTypes.bool
-
-};
 
 
 export default BurgerConstructor;

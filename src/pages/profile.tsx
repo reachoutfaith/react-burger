@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, FC } from 'react';
 import style from './profile.module.css';
 import { Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,26 +10,31 @@ import { deleteCookie } from '../services/utils';
 import { PasswordInput } from '../components/custom/input/password-input';
 import { EmailInput } from '../components/custom/input/email-input';
 import { NameInput } from '../components/custom/input/name-input';
-import PropTypes from 'prop-types';
+import { IFetchResponse, IFormProps } from '../components/utils/types';
 
-const ProfilePage = () => {
+interface IProfileProps extends IFormProps {
+    password?: string;
+}
+
+
+const ProfilePage: FC = () => {
     const dispatch = useDispatch();
-    const user = useSelector((store) => store.profile.user);
-    const [prevState, setPrevState] = useState({})
-    const [form, setForm] = useState({ name: user.name, email: user.email, password: '123456' });
-    const failedLogged = useSelector((store) => store.profile.refreshTokenFailed);
+    const user = useSelector((store: any) => store.profile.user);
+    const [prevState, setPrevState] = useState<{ [key: string]: string } | {}>({})
+    const [form, setForm] = useState<IProfileProps>({ name: user.name, email: user.email, password: '' });
+    const failedLogged = useSelector((store: any) => store.profile.refreshTokenFailed);
     const history = useHistory();
-    const hasError = useSelector((store) => store.profile.updateUserSuccess);
-    const error = useSelector((store) => store.profile.errorMessage);
+    const hasError = useSelector((store: any) => store.profile.updateUserSuccess);
+    const error = useSelector((store: any) => store.profile.errorMessage);
 
-    const onChange = e => {
+    const onChange = (e: any) => {
         setForm({ ...form, [e.target.name]: e.target.value });
 
     };
 
     const uploadUserInfo = async () => {
         if (!user || Object.keys(user).length <= 0) {
-            const data = await getUserInfo();
+            const data: IFetchResponse<JSON> = await getUserInfo();
 
             if (data.success === false) {
                 dispatch(refreshTokenThunk());
@@ -41,27 +46,28 @@ const ProfilePage = () => {
                 })
                 setForm(data.user);
 
-                if (Object.keys(prevState) <= 0) {
+                if (Object.keys(prevState).length <= 0) {
                     setPrevState(data.user)
                 }
             }
         }
     }
 
-    useEffect(async () => {
-        uploadUserInfo();
-    }, [user, history]);
+    useEffect(
+        () => {
+            uploadUserInfo();
+        }, [user, history]);
 
     const updateUserInfo = useCallback(
         async (form, user) => {
 
             let keys = Object.keys(form).filter((key) => form[key] !== user[key]);
-            const obj = {}
+            const obj: { [key: string]: string } = {}
             keys.map(item => obj[item] = form[item]);
             setPrevState({ ...user })
 
 
-            const data = await updateUser(obj);
+            const data: IFetchResponse<JSON> = await updateUser(obj);
 
             if (data.success === true) {
                 dispatch({
@@ -83,7 +89,7 @@ const ProfilePage = () => {
 
     const cancelUserChanges = useCallback(
         async (prevState) => {
-            const data = await updateUser(prevState);
+            const data: IFetchResponse<JSON> = await updateUser(prevState);
 
             if (data.success === true) {
                 dispatch({
@@ -104,7 +110,7 @@ const ProfilePage = () => {
     );
 
     const signOut = async () => {
-        const data = await logoutUser();
+        const data: IFetchResponse<JSON> = await logoutUser();
 
         if (data.success === true) {
             deleteCookie('accessToken');
@@ -151,7 +157,7 @@ const ProfilePage = () => {
                         <EmailInput onChange={onChange} value={'' || form.email} name={'email'} />
                     </div>
                     <div className="mb-6">
-                        <PasswordInput onChange={onChange} value={'' || form.password} name={'password'} />
+                        <PasswordInput onChange={onChange} value={'123456' || form.password} name={'password'} />
                     </div>
                     <div className={`mt-6 ${style.buttons}`}>
                         <div className="ml-2">
@@ -174,14 +180,6 @@ const ProfilePage = () => {
     )
 }
 
-
-
-ProfilePage.propTypes = {
-    user: PropTypes.object,
-    failedLogged: PropTypes.bool,
-    hasError: PropTypes.bool,
-    error: PropTypes.string
-}
 
 
 export default ProfilePage;

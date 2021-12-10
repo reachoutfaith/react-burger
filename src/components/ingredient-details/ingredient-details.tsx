@@ -1,18 +1,22 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo, FC } from 'react';
 import IngredientDetailsStyle from './ingredient-details.module.css';
 import PropTypes from 'prop-types';
-import itemObj from '../utils/types';
+import { TItem } from '../utils/types';
 import { useSelector, useDispatch } from 'react-redux';
-import { useParams, Redirect, useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
-const IngredientDetails = () => {
+export interface IId {
+    id: string | undefined
+}
 
-    const { id } = useParams();
-    const data = useSelector((store) => store.ingredients.ingredients);
-    const isLoading = useSelector((store) => store.ingredients)
+const IngredientDetails: FC = () => {
+
+    const { id } = useParams<IId>();
+    const data = useSelector((store: any) => store.ingredients.ingredients);
+    const isLoading = useSelector((store: any) => store.ingredients)
 
     const currentIngredient = useMemo(() => {
-        return data.find(item => item._id === id);
+        return data.find((item: TItem) => item._id === id);
     }, [data]);
 
 

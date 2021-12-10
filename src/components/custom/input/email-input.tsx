@@ -1,22 +1,23 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, FC } from 'react';
 import { Input } from '@ya.praktikum/react-developer-burger-ui-components';
+import { IInputProps } from '../../utils/types';
 
-const validateEmail = email => {
+const validateEmail = (email: string) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
 };
 
-export const EmailInput = ({ value, onChange, name, size = 'default' }) => {
-    const [fieldDisabled, setDisabled] = useState(true);
-    const [error, setError] = useState(false);
-    const inputRef = useRef(null);
+export const EmailInput: FC<IInputProps> = ({ value, onChange, name, size = 'default' }) => {
+    const [fieldDisabled, setDisabled] = useState<boolean>(true);
+    const [error, setError] = useState<boolean>(false);
+    const inputRef = useRef<HTMLInputElement>(null);
 
     const onIconClick = () => {
         setDisabled(false);
         setTimeout(() => inputRef.current?.focus(), 0);
     };
 
-    const validateField = value => {
+    const validateField = (value: string) => {
         setError(!validateEmail(value));
     };
 
@@ -24,7 +25,7 @@ export const EmailInput = ({ value, onChange, name, size = 'default' }) => {
         setError(false);
     };
 
-    const onBlur = e => {
+    const onBlur = (e: any) => {
         if (e.target.value) {
             validateField(e.target.value);
         } else {

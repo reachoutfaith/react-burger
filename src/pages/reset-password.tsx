@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, FC } from 'react';
 import { useHistory, Redirect, useLocation } from 'react-router-dom';
 import { savePasswordThunk } from '../services/actions/user';
 import style from './login.module.css';
@@ -6,18 +6,28 @@ import { Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { PasswordInput } from '../components/custom/input/password-input';
 import { NameInput } from '../components/custom/input/name-input';
-import PropTypes from 'prop-types';
+import { Location } from "history";
 
-const ResetPasswordPage = () => {
-    const [form, setValue] = useState({ password: '', token: '' });
+interface IPasswordProps {
+    password: string;
+    token: string;
+}
+
+interface ILocation {
+    resetPasswordRequest?: Location<{} | null | undefined>;
+    from?: Location<{} | null | undefined>
+}
+
+const ResetPasswordPage: FC = () => {
+    const [form, setValue] = useState<IPasswordProps>({ password: '', token: '' });
     const history = useHistory();
-    const location = useLocation();
+    const location = useLocation<ILocation>();
     const dispatch = useDispatch();
-    const hasError = useSelector(store => store.profile.savePasswordFailed);
-    const error = useSelector(store => store.profile.errorMessage);
-    const isAuthenticated = useSelector(store => store.profile.isAuthenticated);
+    const hasError = useSelector((store: any) => store.profile.savePasswordFailed);
+    const error = useSelector((store: any) => store.profile.errorMessage);
+    const isAuthenticated = useSelector((store: any) => store.profile.isAuthenticated);
 
-    const onChange = e => {
+    const onChange = (e: any) => {
         setValue({ ...form, [e.target.name]: e.target.value });
     };
 
@@ -53,7 +63,7 @@ const ResetPasswordPage = () => {
                     <NameInput onChange={onChange} value={form.token} name={'token'} placeholder={'Введите код из письма'} />
                 </div>
                 <div className="mb-20">
-                    <Button className={`${style.button}`} type="primary" size="medium" >Сохранить</Button>
+                    <Button type="primary" size="medium" >Сохранить</Button>
                 </div>
             </form>
             <div className={` ${style.text__wrapper} mb-4`}>
@@ -68,10 +78,5 @@ const ResetPasswordPage = () => {
     )
 }
 
-ResetPasswordPage.propTypes = {
-    hasError: PropTypes.bool,
-    error: PropTypes.string,
-    isAuthenticated: PropTypes.bool
-}
 
 export default ResetPasswordPage;

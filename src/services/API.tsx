@@ -1,20 +1,33 @@
 import { getCookie } from './utils';
+import { TItem } from '../components/utils/types';
+
+
+interface CustomResponse<T> extends Body {
+    readonly headers: Headers;
+    readonly ok: boolean;
+    readonly redirected: boolean;
+    readonly status: number;
+    readonly statusText: string;
+    readonly trailer?: Promise<Headers>;
+    readonly type: ResponseType;
+    readonly url: string;
+    clone(): Response;
+    json(): Promise<T>;
+};
+
+
+export const checkResponse = (res: CustomResponse<JSON>) => {
+    return res.ok ? res.json() : res.json().then((err) => Promise.reject(`Ошибка ${res.status}`));
+};
 
 export const URL = 'https://norma.nomoreparties.space/api';
-
-function checkResponse(res) {
-    if (res.ok) {
-        return res.json();
-    }
-    return Promise.reject(`Ошибка ${res.status}`);
-}
 
 export async function fetchIngredients() {
     const data = await fetch(URL + '/ingredients').then(checkResponse);
     return data
 }
 
-export async function fetchOrderIngredients(orderItems) {
+export async function fetchOrderIngredients(orderItems: TItem[]) {
     const body = { ingredients: orderItems };
     const data = await fetch(URL + '/orders', {
         method: "POST",
@@ -27,7 +40,7 @@ export async function fetchOrderIngredients(orderItems) {
     return data
 }
 
-export async function resetPasswordRequest(email) {
+export async function resetPasswordRequest(email: { email: string }) {
     const data = await fetch(URL + '/password-reset', {
         method: "POST",
         headers: {
@@ -39,8 +52,8 @@ export async function resetPasswordRequest(email) {
     return data
 }
 
-export async function saveNewPasswordRequest(form) {
-    console.log(form)
+
+export async function saveNewPasswordRequest(form: { password: string, token: string }) {
     const data = await fetch(URL + '/password-reset/reset', {
         method: "POST",
         headers: {
@@ -53,8 +66,7 @@ export async function saveNewPasswordRequest(form) {
     return data
 }
 
-export async function createUser(form) {
-    console.log('form createUser ', form)
+export async function createUser(form: { email: string, password: string, name: string }) {
     const data = await fetch(URL + '/auth/register', {
         method: "POST",
         headers: {
@@ -67,10 +79,9 @@ export async function createUser(form) {
     return data
 }
 
-export async function loginUser(form) {
+export async function loginUser(form: { email: string, password: string }) {
     const data = await fetch(URL + '/auth/login', {
         method: "POST",
-        method: 'POST',
         mode: 'cors',
         cache: 'no-cache',
         credentials: 'same-origin',
@@ -116,11 +127,10 @@ export async function getUserInfo() {
         referrerPolicy: 'no-referrer'
     }).then(checkResponse);
 
-    //console.log('fetch User ', data)
     return data;
 }
 
-export async function refreshToken(token) {
+export async function refreshToken(token: string) {
     const body = {
         token: token
     }
@@ -137,7 +147,7 @@ export async function refreshToken(token) {
 }
 
 
-export async function updateUser(form) {
+export async function updateUser(form: { [key: string]: any }) {
 
     const data = await fetch(URL + '/auth/user', {
         method: "PATCH",

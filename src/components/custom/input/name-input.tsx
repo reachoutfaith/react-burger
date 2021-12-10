@@ -1,10 +1,15 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, FC } from 'react';
 import { Input } from '@ya.praktikum/react-developer-burger-ui-components';
+import { IInputProps } from '../../utils/types';
 
-export const NameInput = ({ value, onChange, name, size = 'default', placeholder }) => {
-    const [fieldDisabled, setDisabled] = useState(true);
-    const [error, setError] = useState(false);
-    const inputRef = useRef(null);
+interface INameInputProps extends IInputProps {
+    placeholder?: string
+}
+
+export const NameInput: FC<INameInputProps> = ({ value, onChange, name, size = 'default', placeholder }) => {
+    const [fieldDisabled, setDisabled] = useState<boolean>(true);
+    const [error, setError] = useState<boolean>(false);
+    const inputRef = useRef<HTMLInputElement>(null);
     const placeHolder = placeholder || 'Имя';
 
     const onIconClick = () => {
