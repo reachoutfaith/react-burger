@@ -1,17 +1,12 @@
 import React, { useMemo, FC } from 'react';
 import IngredientDetailsStyle from './ingredient-details.module.css';
-import PropTypes from 'prop-types';
 import { TItem } from '../utils/types';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-
-export interface IId {
-    id: string | undefined
-}
 
 const IngredientDetails: FC = () => {
 
-    const { id } = useParams<IId>();
+    const { id } = useParams<{ id: string }>();
     const data = useSelector((store: any) => store.ingredients.ingredients);
     const isLoading = useSelector((store: any) => store.ingredients)
 

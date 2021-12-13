@@ -1,4 +1,4 @@
-import React, { useState, useCallback, FC } from 'react';
+import React, { useState, useCallback, FC, ChangeEvent } from 'react';
 import { useHistory, Redirect, useLocation } from 'react-router-dom';
 import { createUserThunk } from '../services/actions/user';
 import style from './login.module.css';
@@ -24,7 +24,7 @@ const RegisterPage: FC = () => {
     const isAuthenticated = useSelector((store: any) => store.profile.isAuthenticated);
 
 
-    const onChange = (e: any) => {
+    const onChange = (e: ChangeEvent<HTMLInputElement>) => {
         setValue({ ...form, [e.target.name]: e.target.value });
     };
 
@@ -51,13 +51,13 @@ const RegisterPage: FC = () => {
             {hasError && <span className={`mt-4 mb-4 text text_type_main-default ${style.error}`}>{error}</span>}
             <form action="" className={`${style.form}`} onSubmit={createUser}>
                 <div className="mb-6">
-                    <NameInput onChange={onChange} value={form.name} name={'name'} />
+                    <NameInput onChange={onChange} value={form.name} name={'name'} placeholder='Имя' />
                 </div>
                 <div className="mb-6">
                     <EmailInput onChange={onChange} value={form.email} name={'email'} />
                 </div>
                 <div className="mb-6">
-                    <PasswordInput onChange={onChange} value={form.password} name={'password'} />
+                    <PasswordInput onChange={onChange} value={form.password} name={'password'} placeholder='Пароль' />
                 </div>
                 <div className="mb-20">
                     <Button type="primary" size="medium" >Зарегистрироваться</Button>

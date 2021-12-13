@@ -7,20 +7,19 @@ import { useDrag } from 'react-dnd';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 
-export interface IBurgerComponentProps {
-    showModalWindow: Function
+interface IBurgerComponentProps {
+    showModalWindow: Function;
 }
 
-export interface IIngredientProps {
+interface IIngredientProps {
     item: TItem,
-    handleModalOpen: Function
+    handleModalOpen: Function;
 }
 
-export type TItemWithCounter = TItem & { counter?: number }
+type TItemWithCounter = TItem & { counter?: number }
 
 const Ingredient: FC<IIngredientProps> = ({ item, handleModalOpen }) => {
     let count = 0;
-    //const item = props.item;
     const dispatch = useDispatch();
     const history = useHistory();
     const location = useLocation();
@@ -76,7 +75,6 @@ const BurgerIngredients: FC<IBurgerComponentProps> = ({ showModalWindow }) => {
     const bunsTitleRef = useRef<HTMLHeadingElement>(null);
     const saucesTitleRef = useRef<HTMLHeadingElement>(null);
     const mainTitleRef = useRef<HTMLHeadingElement>(null);
-    //const showModalWindow = props.showModalWindow;
 
     useEffect(
         () => {

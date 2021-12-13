@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback, FC } from 'react';
+import React, { useState, useRef, useEffect, useCallback, FC, ChangeEvent } from 'react';
 import style from './profile.module.css';
 import { Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,7 +13,7 @@ import { NameInput } from '../components/custom/input/name-input';
 import { IFetchResponse, IFormProps } from '../components/utils/types';
 
 interface IProfileProps extends IFormProps {
-    password?: string;
+    password: string;
 }
 
 
@@ -21,13 +21,14 @@ const ProfilePage: FC = () => {
     const dispatch = useDispatch();
     const user = useSelector((store: any) => store.profile.user);
     const [prevState, setPrevState] = useState<{ [key: string]: string } | {}>({})
-    const [form, setForm] = useState<IProfileProps>({ name: user.name, email: user.email, password: '' });
+    const [form, setForm] = useState<IProfileProps>({ name: user.name, email: user.email, password: 'qazswx' });
     const failedLogged = useSelector((store: any) => store.profile.refreshTokenFailed);
     const history = useHistory();
     const hasError = useSelector((store: any) => store.profile.updateUserSuccess);
     const error = useSelector((store: any) => store.profile.errorMessage);
 
-    const onChange = (e: any) => {
+    const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+
         setForm({ ...form, [e.target.name]: e.target.value });
 
     };
@@ -151,13 +152,13 @@ const ProfilePage: FC = () => {
                 <div className={`ml-15 ${style.window}`}>
                     {hasError && <span className={`mt-4 mb-4 text text_type_main-default ${style.error}`}>{error}</span>}
                     <div className="mb-6">
-                        <NameInput onChange={onChange} value={'' || form.name} name={'name'} />
+                        <NameInput placeholder='Имя' onChange={onChange} value={'' || form.name} name={'name'} />
                     </div>
                     <div className="mb-6">
                         <EmailInput onChange={onChange} value={'' || form.email} name={'email'} />
                     </div>
                     <div className="mb-6">
-                        <PasswordInput onChange={onChange} value={'123456' || form.password} name={'password'} />
+                        <PasswordInput placeholder='Пароль' onChange={onChange} value={form.password} name={'password'} />
                     </div>
                     <div className={`mt-6 ${style.buttons}`}>
                         <div className="ml-2">

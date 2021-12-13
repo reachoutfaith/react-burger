@@ -1,4 +1,4 @@
-import React, { useState, useCallback, FC } from 'react';
+import React, { useState, useCallback, FC, ChangeEvent } from 'react';
 import { useHistory, Redirect, useLocation } from 'react-router-dom';
 import { savePasswordThunk } from '../services/actions/user';
 import style from './login.module.css';
@@ -27,7 +27,7 @@ const ResetPasswordPage: FC = () => {
     const error = useSelector((store: any) => store.profile.errorMessage);
     const isAuthenticated = useSelector((store: any) => store.profile.isAuthenticated);
 
-    const onChange = (e: any) => {
+    const onChange = (e: ChangeEvent<HTMLInputElement>) => {
         setValue({ ...form, [e.target.name]: e.target.value });
     };
 

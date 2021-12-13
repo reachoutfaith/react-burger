@@ -1,4 +1,4 @@
-import React, { useRef, useState, FC } from 'react';
+import React, { useRef, useState, FC, FocusEvent } from 'react';
 import { Input } from '@ya.praktikum/react-developer-burger-ui-components';
 import { IInputProps } from '../../utils/types';
 
@@ -25,7 +25,7 @@ export const EmailInput: FC<IInputProps> = ({ value, onChange, name, size = 'def
         setError(false);
     };
 
-    const onBlur = (e: any) => {
+    const onBlur = (e: FocusEvent<HTMLInputElement>) => {
         if (e.target.value) {
             validateField(e.target.value);
         } else {

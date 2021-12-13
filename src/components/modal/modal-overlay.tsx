@@ -8,7 +8,7 @@ export interface IComponentProps {
 const ModalOverlay: FC<IComponentProps> = ({ closeModal }) => {
 
     return (
-        <div onClick={() => { closeModal() }} className={`${ModalOverlayStyle.modal__overlay}`} />
+        <div onClick={() => closeModal()} className={`${ModalOverlayStyle.modal__overlay}`} />
     )
 }
 

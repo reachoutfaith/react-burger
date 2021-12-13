@@ -1,4 +1,4 @@
-import React, { useRef, useState, FC } from 'react';
+import React, { useRef, useState, FC, FocusEvent } from 'react';
 import { Input } from '@ya.praktikum/react-developer-burger-ui-components';
 import { IInputProps } from '../../utils/types';
 
@@ -6,12 +6,11 @@ interface IPasswordInputProps extends IInputProps {
     placeholder?: string
 }
 
-export const PasswordInput: FC<IPasswordInputProps> = ({ value, onChange, name, size = 'default', placeholder }) => {
+export const PasswordInput: FC<IPasswordInputProps> = ({ value, onChange, name, placeholder, size = 'default' }) => {
     const [fieldDisabled, setDisabled] = useState<boolean>(true);
     const [visible, setVisible] = useState<boolean>(false);
     const [error, setError] = useState<boolean>(false);
     const inputRef = useRef<HTMLInputElement>(null);
-    const placeHolder = placeholder || 'Пароль';
 
     const onIconClick = () => {
         setDisabled(false);
@@ -27,7 +26,7 @@ export const PasswordInput: FC<IPasswordInputProps> = ({ value, onChange, name, 
         setError(false);
     };
 
-    const onBlur = (e: any) => {
+    const onBlur = (e: FocusEvent<HTMLInputElement>) => {
         if (e.target.value) {
             validateField(e.target.value);
         } else {
@@ -40,7 +39,7 @@ export const PasswordInput: FC<IPasswordInputProps> = ({ value, onChange, name, 
     return (
         <Input
             type={visible ? 'text' : 'password'}
-            placeholder={placeHolder}
+            placeholder={placeholder}
             onChange={onChange}
             icon={visible ? 'CloseIcon' : 'EditIcon'}
             value={value}

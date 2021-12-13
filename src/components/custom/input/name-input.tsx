@@ -6,11 +6,10 @@ interface INameInputProps extends IInputProps {
     placeholder?: string
 }
 
-export const NameInput: FC<INameInputProps> = ({ value, onChange, name, size = 'default', placeholder }) => {
+export const NameInput: FC<INameInputProps> = ({ value, onChange, name, placeholder, size = 'default' }) => {
     const [fieldDisabled, setDisabled] = useState<boolean>(true);
     const [error, setError] = useState<boolean>(false);
     const inputRef = useRef<HTMLInputElement>(null);
-    const placeHolder = placeholder || 'Имя';
 
     const onIconClick = () => {
         setDisabled(false);
@@ -28,7 +27,7 @@ export const NameInput: FC<INameInputProps> = ({ value, onChange, name, size = '
     return (
         <Input
             type='text'
-            placeholder={placeHolder}
+            placeholder={placeholder}
             onChange={onChange}
             icon={!fieldDisabled ? 'CloseIcon' : 'EditIcon'}
             value={value}

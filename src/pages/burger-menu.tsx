@@ -5,7 +5,7 @@ import BurgerConstructor from '../components/burger-constructor/burger-construct
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-export interface IComponentProps {
+interface IComponentProps {
     handleOpenModal: Function
 }
 

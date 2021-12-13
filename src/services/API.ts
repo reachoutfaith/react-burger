@@ -15,6 +15,12 @@ interface CustomResponse<T> extends Body {
     json(): Promise<T>;
 };
 
+type IReturn = {
+    success?: boolean;
+    message?: string;
+    [key: string]: any
+}
+
 
 export const checkResponse = (res: CustomResponse<JSON>) => {
     return res.ok ? res.json() : res.json().then((err) => Promise.reject(`Ошибка ${res.status}`));
@@ -22,12 +28,12 @@ export const checkResponse = (res: CustomResponse<JSON>) => {
 
 export const URL = 'https://norma.nomoreparties.space/api';
 
-export async function fetchIngredients() {
+export const fetchIngredients = async (): Promise<IReturn> => {
     const data = await fetch(URL + '/ingredients').then(checkResponse);
     return data
 }
 
-export async function fetchOrderIngredients(orderItems: TItem[]) {
+export const fetchOrderIngredients = async (orderItems: TItem[]): Promise<IReturn> => {
     const body = { ingredients: orderItems };
     const data = await fetch(URL + '/orders', {
         method: "POST",
@@ -40,7 +46,7 @@ export async function fetchOrderIngredients(orderItems: TItem[]) {
     return data
 }
 
-export async function resetPasswordRequest(email: { email: string }) {
+export const resetPasswordRequest = async (email: { email: string }): Promise<IReturn> => {
     const data = await fetch(URL + '/password-reset', {
         method: "POST",
         headers: {
@@ -53,7 +59,7 @@ export async function resetPasswordRequest(email: { email: string }) {
 }
 
 
-export async function saveNewPasswordRequest(form: { password: string, token: string }) {
+export const saveNewPasswordRequest = async (form: { password: string, token: string }): Promise<IReturn> => {
     const data = await fetch(URL + '/password-reset/reset', {
         method: "POST",
         headers: {
@@ -66,7 +72,7 @@ export async function saveNewPasswordRequest(form: { password: string, token: st
     return data
 }
 
-export async function createUser(form: { email: string, password: string, name: string }) {
+export const createUser = async (form: { email: string, password: string, name: string }): Promise<IReturn> => {
     const data = await fetch(URL + '/auth/register', {
         method: "POST",
         headers: {
@@ -75,11 +81,11 @@ export async function createUser(form: { email: string, password: string, name: 
         body: JSON.stringify(form)
     }).then(checkResponse);
 
-    console.log('createUser API data ', data)
+
     return data
 }
 
-export async function loginUser(form: { email: string, password: string }) {
+export const loginUser = async (form: { email: string, password: string }): Promise<IReturn> => {
     const data = await fetch(URL + '/auth/login', {
         method: "POST",
         mode: 'cors',
@@ -92,11 +98,11 @@ export async function loginUser(form: { email: string, password: string }) {
         referrerPolicy: 'no-referrer',
         body: JSON.stringify(form)
     }).then(checkResponse)
-    console.log('login ', data)
+
     return data
 }
 
-export async function logoutUser() {
+export const logoutUser = async (): Promise<IReturn> => {
     const token = localStorage.getItem('refreshToken');
     const body = {
         token: token
@@ -113,7 +119,7 @@ export async function logoutUser() {
 }
 
 
-export async function getUserInfo() {
+export const getUserInfo = async (): Promise<IReturn> => {
     const data = await fetch(URL + '/auth/user', {
         method: "GET",
         mode: 'cors',
@@ -130,7 +136,7 @@ export async function getUserInfo() {
     return data;
 }
 
-export async function refreshToken(token: string) {
+export const refreshToken = async (token: string): Promise<IReturn> => {
     const body = {
         token: token
     }
@@ -142,12 +148,12 @@ export async function refreshToken(token: string) {
         },
         body: JSON.stringify(body)
     }).then(checkResponse);
-    //console.log('fetch refreshToken ', data)
+
     return data
 }
 
 
-export async function updateUser(form: { [key: string]: any }) {
+export const updateUser = async (form: { [key: string]: string }): Promise<IReturn> => {
 
     const data = await fetch(URL + '/auth/user', {
         method: "PATCH",

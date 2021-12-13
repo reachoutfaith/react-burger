@@ -18,42 +18,30 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
-export interface IIngredientProps {
+interface IIngredientProps {
     item: TItem;
     id?: string;
     index: number;
-    deleteItem: Function;
-    moveCard: Function;
+    deleteItem: (item: TItem) => void;
+    moveCard: (dragIndex: number, hoverIndex: number) => void;
 }
 
-export interface CardProps {
-    id?: any
-    text: string
-    index: number
-    moveCard: (dragIndex: number, hoverIndex: number) => void
-}
-
-export interface DragItem {
+interface DragItem {
     index: number
     id: string
     type: string
 }
 
-export interface ClientOffset {
+interface ClientOffset {
     x: number;
     y: number;
 }
 
-export type TItemCopied = TItem & { counter?: number; }
+type TItemCopied = TItem & { counter?: number; }
 
 
 const DraggableIngredient: FC<IIngredientProps> = ({ item, id, index, deleteItem, moveCard }) => {
-    // const item = props.item;
-    // const id = props.item._id;
-    // const index = props.index;
     const ref = useRef<HTMLDivElement>(null);
-    //const deleteItem = props.deleteItem;
-    //const moveCard = props.moveCard;
 
     const [{ handlerId }, drop] = useDrop({
         accept: ItemTypes.INGREDIENT,
@@ -94,7 +82,7 @@ const DraggableIngredient: FC<IIngredientProps> = ({ item, id, index, deleteItem
         item: () => {
             return { id, index };
         },
-        collect: (monitor: any) => ({
+        collect: (monitor) => ({
             isDragging: monitor.isDragging(),
         }),
     });
@@ -140,8 +128,8 @@ const BurgerConstructor: FC = () => {
     }, [data]);
 
 
-    function showModalWindow(event: any) {
-        event.preventDefault();
+    function showModalWindow() {
+        //event.preventDefault();
         const items = data.map((item: TItem) => item._id);
 
         if (!isAuthenticated && Object.keys(user).length <= 0) {
@@ -165,7 +153,6 @@ const BurgerConstructor: FC = () => {
     }
 
     function addItem(item: TItem) {
-
         if (item.type === 'bun') {
             dispatch({
                 type: ADD_BUN,
@@ -182,7 +169,7 @@ const BurgerConstructor: FC = () => {
     }
 
     function increaseCounter(item: TItem) {
-        let copiedCounterArray: TItemCopied[] = [...counterIngredients];
+        const copiedCounterArray: TItemCopied[] = [...counterIngredients];
         const index = copiedCounterArray.findIndex(elem => elem._id === item._id);
         let count: number | undefined = copiedCounterArray[index]["counter"];
 
@@ -220,7 +207,7 @@ const BurgerConstructor: FC = () => {
     }
 
     function decreaseCounter(item: TItem) {
-        let copiedCounterArray = [...counterIngredients];
+        const copiedCounterArray = [...counterIngredients];
         const index = copiedCounterArray.findIndex((elem: TItem) => elem._id === item._id);
         let count: number = copiedCounterArray[index]["counter"];
         let newCount = count - 1
@@ -241,7 +228,7 @@ const BurgerConstructor: FC = () => {
 
     const [{ isOver }, drop] = useDrop({
         accept: ItemTypes.INGREDIENT,
-        drop: (item: TItem, monitor: any) => {
+        drop: (item: TItem, monitor) => {
             item.hasOwnProperty('name') && addItem(item);
         },
         collect: (monitor: any) => ({
@@ -283,7 +270,7 @@ const BurgerConstructor: FC = () => {
                     {totalPrice && totalPrice}
                 </span>
                 <CurrencyIcon type="primary" />
-                <Button onClick={showModalWindow} type="primary" size="medium">Оформить заказ</Button>
+                <Button onClick={() => showModalWindow()} type="primary" size="medium">Оформить заказ</Button>
             </div>
 
             {order !== undefined && showModal === true && <Modal closeModal={closeModalWindow}><OrderDetails /></Modal>}

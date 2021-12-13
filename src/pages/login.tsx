@@ -1,4 +1,4 @@
-import React, { useCallback, useState, FC } from 'react';
+import React, { useCallback, useState, FC, ChangeEvent } from 'react';
 import { useHistory, Redirect, useLocation } from 'react-router-dom';
 import style from './login.module.css';
 import { Button } from '@ya.praktikum/react-developer-burger-ui-components';
@@ -23,7 +23,7 @@ const LoginPage: FC = () => {
     const isAuthenticated = useSelector((store: any) => store.profile.isAuthenticated);
 
 
-    const onChange = (e: any) => {
+    const onChange = (e: ChangeEvent<HTMLInputElement>) => {
         setValue({ ...form, [e.target.name]: e.target.value });
     };
 
@@ -57,7 +57,7 @@ const LoginPage: FC = () => {
                     <EmailInput onChange={onChange} value={form.email} name={'email'} />
                 </div>
                 <div className="mb-6">
-                    <PasswordInput onChange={onChange} value={form.password} name={'password'} />
+                    <PasswordInput onChange={onChange} value={form.password} name={'password'} placeholder='Пароль' />
                 </div>
                 <div className="mb-20">
                     <Button type="primary" size="medium" >Войти</Button>

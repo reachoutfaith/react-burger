@@ -1,4 +1,4 @@
-import React, { useState, useCallback, FC } from 'react';
+import React, { useState, useCallback, FC, ChangeEvent } from 'react';
 import { useHistory, Redirect, useLocation } from 'react-router-dom';
 import { resetPasswordRequest } from '../services/API';
 import style from './login.module.css';
@@ -21,12 +21,12 @@ const ForgotPasswordPage: FC = () => {
     const [error, setError] = useState<string>('');
     const isAuthenticated = useSelector((store: any) => store.profile.isAuthenticated);
 
-    const onChange = (e: any) => {
+    const onChange = (e: ChangeEvent<HTMLInputElement>) => {
         setValue({ email: e.target.value });
     };
 
     const resetPassword = useCallback(
-        async (e: any) => {
+        async (e) => {
             e.preventDefault();
             const data: IFetchResponse<JSON> = await resetPasswordRequest(form);
 
