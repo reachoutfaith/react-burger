@@ -7,14 +7,12 @@ import { loginUserThunk } from '../services/actions/user';
 import { PasswordInput } from '../components/custom/input/password-input';
 import { EmailInput } from '../components/custom/input/email-input';
 import { Location } from "history";
+import { TInputFormValues } from '../components/utils/types';
 
-type TLogin = {
-    email: string;
-    password: string;
-}
+type TLoginForm = Omit<TInputFormValues, "name">
 
 const LoginPage: FC = () => {
-    const [form, setValue] = useState<TLogin>({ email: '', password: '' });
+    const [form, setValue] = useState<TLoginForm>({ email: '', password: '' });
     const history = useHistory();
     const location = useLocation<{ from?: Location<{} | null | undefined> }>();
     const dispatch = useDispatch();

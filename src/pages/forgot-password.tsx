@@ -6,19 +6,16 @@ import { Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import { useSelector } from 'react-redux';
 import { EmailInput } from '../components/custom/input/email-input';
 import { Location } from "history";
-import { IFetchResponse } from '../components/utils/types'
+import { TFetchResponse, TInputFormValues } from '../components/utils/types';
 
-type TEmail = {
-    email: string
-}
+type TEmail = Omit<TInputFormValues, "name" | "password">
 
 const ForgotPasswordPage: FC = () => {
     const [form, setValue] = useState<TEmail>({ email: '' });
     const history = useHistory();
     const location = useLocation<{ from?: Location<{} | null | undefined> }>();
-    const [isReset, setIsReset] = useState<boolean>(false);
     const [hasError, setHasError] = useState<boolean>(false);
-    const [error, setError] = useState<string>('');
+    const [error, setError] = useState<string | undefined>('');
     const isAuthenticated = useSelector((store: any) => store.profile.isAuthenticated);
 
     const onChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -28,21 +25,18 @@ const ForgotPasswordPage: FC = () => {
     const resetPassword = useCallback(
         async (e) => {
             e.preventDefault();
-            const data: IFetchResponse<JSON> = await resetPasswordRequest(form);
+            const resetPassword: TFetchResponse = await resetPasswordRequest(form);
 
-            if (data.success === true) {
-                setIsReset(true);
+            if (resetPassword.success === true) {
                 history.push('/reset-password', { resetPasswordRequest: true })
             } else {
-                setIsReset(false);
-                setError(data.message);
+                setError(resetPassword.message);
                 setHasError(true);
             }
         }, []
     )
 
     const login = useCallback(() => {
-
         history.replace({ pathname: '/login' })
     }, [history]);
 

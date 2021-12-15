@@ -8,14 +8,10 @@ import { PasswordInput } from '../components/custom/input/password-input';
 import { EmailInput } from '../components/custom/input/email-input';
 import { NameInput } from '../components/custom/input/name-input';
 import { Location } from "history";
-import { IFormProps } from '../components/utils/types'
-
-interface IRegisterProps extends IFormProps {
-    password: string;
-}
+import { TInputFormValues } from '../components/utils/types'
 
 const RegisterPage: FC = () => {
-    const [form, setValue] = useState<IRegisterProps>({ email: '', password: '', name: '' });
+    const [form, setValue] = useState<TInputFormValues>({ email: '', password: '', name: '' });
     const location = useLocation<{ from?: Location<{} | null | undefined> }>();
     const history = useHistory();
     const dispatch = useDispatch();

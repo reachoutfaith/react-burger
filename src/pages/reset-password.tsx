@@ -8,7 +8,7 @@ import { PasswordInput } from '../components/custom/input/password-input';
 import { NameInput } from '../components/custom/input/name-input';
 import { Location } from "history";
 
-interface IPasswordProps {
+type TPasswordProps = {
     password: string;
     token: string;
 }
@@ -19,7 +19,7 @@ interface ILocation {
 }
 
 const ResetPasswordPage: FC = () => {
-    const [form, setValue] = useState<IPasswordProps>({ password: '', token: '' });
+    const [form, setValue] = useState<TPasswordProps>({ password: '', token: '' });
     const history = useHistory();
     const location = useLocation<ILocation>();
     const dispatch = useDispatch();

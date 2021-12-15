@@ -10,45 +10,46 @@ import { deleteCookie } from '../services/utils';
 import { PasswordInput } from '../components/custom/input/password-input';
 import { EmailInput } from '../components/custom/input/email-input';
 import { NameInput } from '../components/custom/input/name-input';
-import { IFetchResponse, IFormProps } from '../components/utils/types';
+import { TFetchResponse, TGetUserInfo, TUpdateUserInfo } from '../components/utils/types';
 
-interface IProfileProps extends IFormProps {
-    password: string;
+type TProfileForm = {
+    name: string | any;
+    email: string | any;
+    password: string
 }
-
 
 const ProfilePage: FC = () => {
     const dispatch = useDispatch();
     const user = useSelector((store: any) => store.profile.user);
-    const [prevState, setPrevState] = useState<{ [key: string]: string } | {}>({})
-    const [form, setForm] = useState<IProfileProps>({ name: user.name, email: user.email, password: 'qazswx' });
-    const failedLogged = useSelector((store: any) => store.profile.refreshTokenFailed);
+    const [prevState, setPrevState] = useState<TUpdateUserInfo | {}>({})
+    const [form, setForm] = useState<TProfileForm>({ name: user.name, email: user.email, password: 'qazswx' });
     const history = useHistory();
     const hasError = useSelector((store: any) => store.profile.updateUserSuccess);
     const error = useSelector((store: any) => store.profile.errorMessage);
 
     const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-
         setForm({ ...form, [e.target.name]: e.target.value });
 
     };
 
+    useEffect(() => {
+        setForm({ name: user.name, email: user.email, password: 'qazswx' })
+    }, [user])
+
     const uploadUserInfo = async () => {
         if (!user || Object.keys(user).length <= 0) {
-            const data: IFetchResponse<JSON> = await getUserInfo();
+            const getUserRequest: TGetUserInfo = await getUserInfo();
 
-            if (data.success === false) {
+            if (getUserRequest.success === false) {
                 dispatch(refreshTokenThunk());
-                setForm(data.user);
             } else {
                 dispatch({
                     type: GET_USER_SUCCESS,
-                    user: data.user
+                    user: getUserRequest.user
                 })
-                setForm(data.user);
 
                 if (Object.keys(prevState).length <= 0) {
-                    setPrevState(data.user)
+                    setPrevState(getUserRequest.user)
                 }
             }
         }
@@ -60,28 +61,23 @@ const ProfilePage: FC = () => {
         }, [user, history]);
 
     const updateUserInfo = useCallback(
-        async (form, user) => {
 
-            let keys = Object.keys(form).filter((key) => form[key] !== user[key]);
-            const obj: { [key: string]: string } = {}
-            keys.map(item => obj[item] = form[item]);
+        async (form, user) => {
             setPrevState({ ...user })
 
 
-            const data: IFetchResponse<JSON> = await updateUser(obj);
+            const updateUserRequest: TGetUserInfo = await updateUser(form);
 
-            if (data.success === true) {
+            if (updateUserRequest.success === true) {
                 dispatch({
                     type: UPDATE_USER_SUCCESS,
-                    user: data.user
+                    user: updateUserRequest.user
                 });
-
-                setForm(data.user);
 
             } else {
                 dispatch({
                     type: UPDATE_USER_ERROR,
-                    errorMessage: data.message
+                    errorMessage: updateUserRequest.message
                 })
             }
 
@@ -90,20 +86,18 @@ const ProfilePage: FC = () => {
 
     const cancelUserChanges = useCallback(
         async (prevState) => {
-            const data: IFetchResponse<JSON> = await updateUser(prevState);
+            const updateUserRequest: TGetUserInfo = await updateUser(prevState);
 
-            if (data.success === true) {
+            if (updateUserRequest.success === true) {
                 dispatch({
                     type: UPDATE_USER_SUCCESS,
-                    user: data.user
+                    user: updateUserRequest.user
                 });
-
-                setForm(data.user);
 
             } else {
                 dispatch({
                     type: UPDATE_USER_ERROR,
-                    errorMessage: data.message
+                    errorMessage: updateUserRequest.message
                 })
             }
 
@@ -111,9 +105,9 @@ const ProfilePage: FC = () => {
     );
 
     const signOut = async () => {
-        const data: IFetchResponse<JSON> = await logoutUser();
+        const logoutRequest: TFetchResponse = await logoutUser();
 
-        if (data.success === true) {
+        if (logoutRequest.success === true) {
             deleteCookie('accessToken');
 
             dispatch({
@@ -152,10 +146,10 @@ const ProfilePage: FC = () => {
                 <div className={`ml-15 ${style.window}`}>
                     {hasError && <span className={`mt-4 mb-4 text text_type_main-default ${style.error}`}>{error}</span>}
                     <div className="mb-6">
-                        <NameInput placeholder='Имя' onChange={onChange} value={'' || form.name} name={'name'} />
+                        <NameInput placeholder='Имя' onChange={onChange} value={form.name} name={'name'} />
                     </div>
                     <div className="mb-6">
-                        <EmailInput onChange={onChange} value={'' || form.email} name={'email'} />
+                        <EmailInput onChange={onChange} value={form.email} name={'email'} />
                     </div>
                     <div className="mb-6">
                         <PasswordInput placeholder='Пароль' onChange={onChange} value={form.password} name={'password'} />
