@@ -43,8 +43,7 @@ export function savePasswordThunk(form) {
 
                 if (res && res.success) {
                     dispatch({
-                        type: SAVE_PASSWORD_SUCCESS,
-                        password: form.password
+                        type: SAVE_PASSWORD_SUCCESS
                     });
                 } else {
                     dispatch({
@@ -186,7 +185,7 @@ export function refreshTokenThunk() {
                     });
                 }
             }).catch((err) => {
-                //console.log(err)
+
                 dispatch({
                     type: REFRESH_TOKEN_ERROR
                 });

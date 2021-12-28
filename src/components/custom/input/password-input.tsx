@@ -1,12 +1,16 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, FC, FocusEvent } from 'react';
 import { Input } from '@ya.praktikum/react-developer-burger-ui-components';
+import { IInputProps } from '../../utils/types';
 
-export const PasswordInput = ({ value, onChange, name, size = 'default', placeholder }) => {
-    const [fieldDisabled, setDisabled] = useState(true);
-    const [visible, setVisible] = useState(false);
-    const [error, setError] = useState(false);
-    const inputRef = useRef(null);
-    const placeHolder = placeholder || 'Пароль';
+interface IPasswordInputProps extends IInputProps {
+    placeholder?: string
+}
+
+export const PasswordInput: FC<IPasswordInputProps> = ({ value, onChange, name, placeholder, size = 'default' }) => {
+    const [fieldDisabled, setDisabled] = useState<boolean>(true);
+    const [visible, setVisible] = useState<boolean>(false);
+    const [error, setError] = useState<boolean>(false);
+    const inputRef = useRef<HTMLInputElement>(null);
 
     const onIconClick = () => {
         setDisabled(false);
@@ -14,7 +18,7 @@ export const PasswordInput = ({ value, onChange, name, size = 'default', placeho
         setTimeout(() => inputRef.current?.focus(), 0);
     };
 
-    const validateField = value => {
+    const validateField = (value: string) => {
         setError(value.length < 6);
     };
 
@@ -22,7 +26,7 @@ export const PasswordInput = ({ value, onChange, name, size = 'default', placeho
         setError(false);
     };
 
-    const onBlur = e => {
+    const onBlur = (e: FocusEvent<HTMLInputElement>) => {
         if (e.target.value) {
             validateField(e.target.value);
         } else {
@@ -35,7 +39,7 @@ export const PasswordInput = ({ value, onChange, name, size = 'default', placeho
     return (
         <Input
             type={visible ? 'text' : 'password'}
-            placeholder={placeHolder}
+            placeholder={placeholder}
             onChange={onChange}
             icon={visible ? 'CloseIcon' : 'EditIcon'}
             value={value}

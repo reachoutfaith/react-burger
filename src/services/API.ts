@@ -1,20 +1,40 @@
 import { getCookie } from './utils';
+import {
+    TItem,
+    TFetchResponse,
+    TFetchOrderIngredients,
+    TFetchSignUser,
+    TRefreshToken,
+    TGetUserInfo,
+    TUpdateUserInfo,
+    CustomResponse
+} from '../components/utils/types';
+
+
+export const checkResponse = (res: CustomResponse<JSON>) => {
+    try {
+        if (res.ok) {
+            return res.json()
+        } else {
+            return res.json().then((err) => Promise.reject(`Ошибка ${res.status}`));
+        }
+    } catch (err) {
+        console.log(err)
+    }
+
+    //previous solution
+    // return res.ok ? res.json() : res.json().then((err) => Promise.reject(`Ошибка ${res.status}`));
+};
 
 export const URL = 'https://norma.nomoreparties.space/api';
 
-function checkResponse(res) {
-    if (res.ok) {
-        return res.json();
-    }
-    return Promise.reject(`Ошибка ${res.status}`);
-}
-
-export async function fetchIngredients() {
-    const data = await fetch(URL + '/ingredients').then(checkResponse);
+export const fetchIngredients = async () => {
+    const data = await fetch(URL + '/ingredients').then(checkResponse) as TItem[];
     return data
+
 }
 
-export async function fetchOrderIngredients(orderItems) {
+export const fetchOrderIngredients = async (orderItems: TItem[]) => {
     const body = { ingredients: orderItems };
     const data = await fetch(URL + '/orders', {
         method: "POST",
@@ -22,55 +42,56 @@ export async function fetchOrderIngredients(orderItems) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(body)
-    }).then(checkResponse);
+    }).then(checkResponse) as TFetchOrderIngredients;
 
+    console.log('fetch order items ', data)
     return data
+
 }
 
-export async function resetPasswordRequest(email) {
+export const resetPasswordRequest = async (email: { email: string }) => {
     const data = await fetch(URL + '/password-reset', {
         method: "POST",
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(email)
-    }).then(checkResponse);
+    }).then(checkResponse) as TFetchResponse;
 
+    console.log('resetpassword ', data)
     return data
 }
 
-export async function saveNewPasswordRequest(form) {
-    console.log(form)
+
+export const saveNewPasswordRequest = async (form: { password: string, token: string }) => {
     const data = await fetch(URL + '/password-reset/reset', {
         method: "POST",
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(form)
-    }).then(checkResponse);
+    }).then(checkResponse) as TFetchResponse;
 
-    console.log('data response ', data)
+    console.log('saveNewPassword ', data)
     return data
 }
 
-export async function createUser(form) {
-    console.log('form createUser ', form)
+export const createUser = async (form: { email: string, password: string, name: string }) => {
     const data = await fetch(URL + '/auth/register', {
         method: "POST",
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(form)
-    }).then(checkResponse);
+    }).then(checkResponse) as TFetchSignUser;
 
-    console.log('createUser API data ', data)
+    console.log('create User ', data)
     return data
 }
 
-export async function loginUser(form) {
+export const loginUser = async (form: { email: string, password: string }) => {
     const data = await fetch(URL + '/auth/login', {
         method: "POST",
-        method: 'POST',
         mode: 'cors',
         cache: 'no-cache',
         credentials: 'same-origin',
@@ -80,12 +101,13 @@ export async function loginUser(form) {
         redirect: 'follow',
         referrerPolicy: 'no-referrer',
         body: JSON.stringify(form)
-    }).then(checkResponse)
+    }).then(checkResponse) as TFetchSignUser;
+
     console.log('login ', data)
     return data
 }
 
-export async function logoutUser() {
+export const logoutUser = async () => {
     const token = localStorage.getItem('refreshToken');
     const body = {
         token: token
@@ -96,13 +118,14 @@ export async function logoutUser() {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(body)
-    }).then(checkResponse);
+    }).then(checkResponse) as TFetchResponse;
 
+    console.log('logout user ', data)
     return data
 }
 
 
-export async function getUserInfo() {
+export const getUserInfo = async () => {
     const data = await fetch(URL + '/auth/user', {
         method: "GET",
         mode: 'cors',
@@ -114,13 +137,13 @@ export async function getUserInfo() {
         },
         redirect: 'follow',
         referrerPolicy: 'no-referrer'
-    }).then(checkResponse);
+    }).then(checkResponse) as TGetUserInfo;
 
-    //console.log('fetch User ', data)
+    console.log('get user info ', data)
     return data;
 }
 
-export async function refreshToken(token) {
+export const refreshToken = async (token: string) => {
     const body = {
         token: token
     }
@@ -131,13 +154,14 @@ export async function refreshToken(token) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(body)
-    }).then(checkResponse);
-    //console.log('fetch refreshToken ', data)
+    }).then(checkResponse) as TRefreshToken;
+
+    console.log('refreshToken ', data)
     return data
 }
 
 
-export async function updateUser(form) {
+export const updateUser = async (form: TUpdateUserInfo) => {
 
     const data = await fetch(URL + '/auth/user', {
         method: "PATCH",
@@ -146,7 +170,8 @@ export async function updateUser(form) {
             Authorization: 'Bearer ' + getCookie('accessToken')
         },
         body: JSON.stringify(form)
-    }).then(checkResponse);
+    }).then(checkResponse) as TGetUserInfo;
 
+    console.log('update user data ', data)
     return data
 }

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, FC, ChangeEvent } from 'react';
 import style from './profile.module.css';
 import { Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,71 +10,74 @@ import { deleteCookie } from '../services/utils';
 import { PasswordInput } from '../components/custom/input/password-input';
 import { EmailInput } from '../components/custom/input/email-input';
 import { NameInput } from '../components/custom/input/name-input';
-import PropTypes from 'prop-types';
+import { TFetchResponse, TGetUserInfo, TUpdateUserInfo } from '../components/utils/types';
 
-const ProfilePage = () => {
+type TProfileForm = {
+    name: string;
+    email: string;
+    password: string
+}
+
+const ProfilePage: FC = () => {
     const dispatch = useDispatch();
-    const user = useSelector((store) => store.profile.user);
-    const [prevState, setPrevState] = useState({})
-    const [form, setForm] = useState({ name: user.name, email: user.email, password: '123456' });
-    const failedLogged = useSelector((store) => store.profile.refreshTokenFailed);
+    const user = useSelector((store: any) => store.profile.user);
+    const [prevState, setPrevState] = useState<TUpdateUserInfo | {}>({})
+    const [form, setForm] = useState<TProfileForm>({ name: user.name, email: user.email, password: 'qazswx' });
     const history = useHistory();
-    const hasError = useSelector((store) => store.profile.updateUserSuccess);
-    const error = useSelector((store) => store.profile.errorMessage);
+    const hasError = useSelector((store: any) => store.profile.updateUserSuccess);
+    const error = useSelector((store: any) => store.profile.errorMessage);
 
-    const onChange = e => {
+    const onChange = (e: ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
 
     };
 
+    useEffect(() => {
+        setForm({ name: user.name, email: user.email, password: 'qazswx' })
+    }, [user])
+
     const uploadUserInfo = async () => {
         if (!user || Object.keys(user).length <= 0) {
-            const data = await getUserInfo();
+            const getUserRequest: TGetUserInfo = await getUserInfo();
 
-            if (data.success === false) {
+            if (getUserRequest.success === false) {
                 dispatch(refreshTokenThunk());
-                setForm(data.user);
             } else {
                 dispatch({
                     type: GET_USER_SUCCESS,
-                    user: data.user
+                    user: getUserRequest.user
                 })
-                setForm(data.user);
 
-                if (Object.keys(prevState) <= 0) {
-                    setPrevState(data.user)
+                if (Object.keys(prevState).length <= 0) {
+                    setPrevState(getUserRequest.user)
                 }
             }
         }
     }
 
-    useEffect(async () => {
-        uploadUserInfo();
-    }, [user, history]);
+    useEffect(
+        () => {
+            uploadUserInfo();
+        }, [user, history]);
 
     const updateUserInfo = useCallback(
-        async (form, user) => {
 
-            let keys = Object.keys(form).filter((key) => form[key] !== user[key]);
-            const obj = {}
-            keys.map(item => obj[item] = form[item]);
+        async (form, user) => {
             setPrevState({ ...user })
 
 
-            const data = await updateUser(obj);
+            const updateUserRequest: TGetUserInfo = await updateUser(form);
 
-            if (data.success === true) {
+            if (updateUserRequest.success === true) {
                 dispatch({
                     type: UPDATE_USER_SUCCESS,
-                    user: data.user
+                    user: updateUserRequest.user
                 });
-
-                setForm(data.user);
 
             } else {
                 dispatch({
                     type: UPDATE_USER_ERROR,
-                    errorMessage: data.message
+                    errorMessage: updateUserRequest.message
                 })
             }
 
@@ -83,20 +86,18 @@ const ProfilePage = () => {
 
     const cancelUserChanges = useCallback(
         async (prevState) => {
-            const data = await updateUser(prevState);
+            const updateUserRequest: TGetUserInfo = await updateUser(prevState);
 
-            if (data.success === true) {
+            if (updateUserRequest.success === true) {
                 dispatch({
                     type: UPDATE_USER_SUCCESS,
-                    user: data.user
+                    user: updateUserRequest.user
                 });
-
-                setForm(data.user);
 
             } else {
                 dispatch({
                     type: UPDATE_USER_ERROR,
-                    errorMessage: data.message
+                    errorMessage: updateUserRequest.message
                 })
             }
 
@@ -104,9 +105,9 @@ const ProfilePage = () => {
     );
 
     const signOut = async () => {
-        const data = await logoutUser();
+        const logoutRequest: TFetchResponse = await logoutUser();
 
-        if (data.success === true) {
+        if (logoutRequest.success === true) {
             deleteCookie('accessToken');
 
             dispatch({
@@ -145,13 +146,13 @@ const ProfilePage = () => {
                 <div className={`ml-15 ${style.window}`}>
                     {hasError && <span className={`mt-4 mb-4 text text_type_main-default ${style.error}`}>{error}</span>}
                     <div className="mb-6">
-                        <NameInput onChange={onChange} value={'' || form.name} name={'name'} />
+                        <NameInput placeholder='Имя' onChange={onChange} value={form.name} name={'name'} />
                     </div>
                     <div className="mb-6">
-                        <EmailInput onChange={onChange} value={'' || form.email} name={'email'} />
+                        <EmailInput onChange={onChange} value={form.email} name={'email'} />
                     </div>
                     <div className="mb-6">
-                        <PasswordInput onChange={onChange} value={'' || form.password} name={'password'} />
+                        <PasswordInput placeholder='Пароль' onChange={onChange} value={form.password} name={'password'} />
                     </div>
                     <div className={`mt-6 ${style.buttons}`}>
                         <div className="ml-2">
@@ -174,14 +175,6 @@ const ProfilePage = () => {
     )
 }
 
-
-
-ProfilePage.propTypes = {
-    user: PropTypes.object,
-    failedLogged: PropTypes.bool,
-    hasError: PropTypes.bool,
-    error: PropTypes.string
-}
 
 
 export default ProfilePage;

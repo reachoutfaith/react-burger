@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { FC } from 'react';
 import OrderDetailsStyle from '../order-details/order-details.module.css'
 import SuccessfulOrder from '../../images/done.png';
 import { useSelector } from 'react-redux';
 
-const OrderDetails = () => {
-    const orderNumber = useSelector(store => store.ingredients.order["number"]);
-    const orderNumberRequest = useSelector(store => store.ingredients.sendOrderRequest);
-    const orderNumberSuccess = useSelector(store => store.ingredients.sendOrderSuccess);
+const OrderDetails: FC = () => {
+    const orderNumber = useSelector((store: any) => store.ingredients.order["number"]);
+    const orderNumberRequest = useSelector((store: any) => store.ingredients.sendOrderRequest);
+    const orderNumberSuccess = useSelector((store: any) => store.ingredients.sendOrderSuccess);
 
     if (orderNumberRequest) {
         return (

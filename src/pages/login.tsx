@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useCallback, useState, FC, ChangeEvent } from 'react';
 import { useHistory, Redirect, useLocation } from 'react-router-dom';
 import style from './login.module.css';
 import { Button } from '@ya.praktikum/react-developer-burger-ui-components';
@@ -6,19 +6,22 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loginUserThunk } from '../services/actions/user';
 import { PasswordInput } from '../components/custom/input/password-input';
 import { EmailInput } from '../components/custom/input/email-input';
-import PropTypes from 'prop-types';
+import { Location } from "history";
+import { TInputFormValues } from '../components/utils/types';
 
-const LoginPage = () => {
-    const [form, setValue] = useState({ email: '', password: '' });
+type TLoginForm = Omit<TInputFormValues, "name">
+
+const LoginPage: FC = () => {
+    const [form, setValue] = useState<TLoginForm>({ email: '', password: '' });
     const history = useHistory();
-    const location = useLocation();
+    const location = useLocation<{ from?: Location<{} | null | undefined> }>();
     const dispatch = useDispatch();
-    const hasError = useSelector(store => store.profile.loginUserFailed);
-    const error = useSelector(store => store.profile.errorMessage);
-    const isAuthenticated = useSelector(store => store.profile.isAuthenticated);
+    const hasError = useSelector((store: any) => store.profile.loginUserFailed);
+    const error = useSelector((store: any) => store.profile.errorMessage);
+    const isAuthenticated = useSelector((store: any) => store.profile.isAuthenticated);
 
 
-    const onChange = e => {
+    const onChange = (e: ChangeEvent<HTMLInputElement>) => {
         setValue({ ...form, [e.target.name]: e.target.value });
     };
 
@@ -52,10 +55,10 @@ const LoginPage = () => {
                     <EmailInput onChange={onChange} value={form.email} name={'email'} />
                 </div>
                 <div className="mb-6">
-                    <PasswordInput onChange={onChange} value={form.password} name={'password'} />
+                    <PasswordInput onChange={onChange} value={form.password} name={'password'} placeholder='Пароль' />
                 </div>
                 <div className="mb-20">
-                    <Button className={`${style.button}`} type="primary" size="medium" >Войти</Button>
+                    <Button type="primary" size="medium" >Войти</Button>
                 </div>
             </form>
             <div className={` ${style.text__wrapper} mb-4`}>
@@ -80,10 +83,5 @@ const LoginPage = () => {
     )
 }
 
-LoginPage.propTypes = {
-    hasError: PropTypes.bool,
-    error: PropTypes.string,
-    isAuthenticated: PropTypes.bool
-}
 
 export default LoginPage;

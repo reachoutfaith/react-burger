@@ -1,22 +1,30 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import React, { useEffect, useState, useRef, useMemo, FC } from 'react';
 import BurgerIngredientsStyle from './burger-ingredients.module.css'
 import { Counter, Tab, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
-import PropTypes from 'prop-types';
-import itemObj from '../utils/types';
+import { TItem } from '../utils/types';
 import { ItemTypes } from '../utils/ItemTypes';
 import { useDrag } from 'react-dnd';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 
+interface IBurgerComponentProps {
+    showModalWindow: Function;
+}
 
-function Ingredient(props) {
+interface IIngredientProps {
+    item: TItem,
+    handleModalOpen: Function;
+}
+
+type TItemWithCounter = TItem & { counter?: number }
+
+const Ingredient: FC<IIngredientProps> = ({ item, handleModalOpen }) => {
     let count = 0;
-    const item = props.item;
     const dispatch = useDispatch();
     const history = useHistory();
     const location = useLocation();
-    const menuCounter = useSelector(store => store.ingredients.counterIngredients);
-    const element = useMemo(() => (menuCounter.filter(elem => elem._id === item._id)), [menuCounter])
+    const menuCounter = useSelector((store: any) => store.ingredients.counterIngredients);
+    const element: TItemWithCounter[] = useMemo(() => (menuCounter.filter((elem: TItemWithCounter) => elem._id === item._id)), [menuCounter])
 
     if (element[0]["counter"] !== undefined && element[0]["counter"] >= 1) {
         count = element[0]["counter"]
@@ -33,13 +41,9 @@ function Ingredient(props) {
         })
     });
 
-    const handleClick = (item) => {
+    const handleClick = (item: TItem) => {
 
-        // dispatch({
-        //     type: SHOW_INGREDIENT,
-        //     ingredient: item
-        // });
-        props.handleModalOpen();
+        handleModalOpen();
 
         history.push({
             pathname: `/ingredients/${item._id}`,
@@ -59,24 +63,23 @@ function Ingredient(props) {
     )
 }
 
-const BurgerIngredients = (props) => {
+const BurgerIngredients: FC<IBurgerComponentProps> = ({ showModalWindow }) => {
     const [current, setCurrent] = React.useState('one');
-    const data = useSelector(store => store.ingredients.ingredients);
+    const data = useSelector((store: any) => store.ingredients.ingredients);
     const dispatch = useDispatch();
-    const buns = [];
-    const sauces = [];
-    const main = [];
+    const buns: TItem[] = [];
+    const sauces: TItem[] = [];
+    const main: TItem[] = [];
     const tabsRef = useRef(null);
-    const containerRef = useRef(null);
-    const bunsTitleRef = useRef(null);
-    const saucesTitleRef = useRef(null);
-    const mainTitleRef = useRef(null);
-    const showModalWindow = props.showModalWindow;
+    const containerRef = useRef<HTMLDivElement>(null);
+    const bunsTitleRef = useRef<HTMLHeadingElement>(null);
+    const saucesTitleRef = useRef<HTMLHeadingElement>(null);
+    const mainTitleRef = useRef<HTMLHeadingElement>(null);
 
     useEffect(
         () => {
-            const startPosition = bunsTitleRef.current.getBoundingClientRect().y;
-            const container = containerRef.current;
+            const startPosition: number = bunsTitleRef.current!.getBoundingClientRect().y;
+            const container = containerRef.current!;
             container.addEventListener('scroll', function () {
                 handleScroll(startPosition)
             })
@@ -90,9 +93,9 @@ const BurgerIngredients = (props) => {
     )
 
 
-    const handleScroll = (start) => {
-        const saucesPosition = saucesTitleRef.current.getBoundingClientRect().y;
-        const mainPosition = mainTitleRef.current.getBoundingClientRect().y;
+    const handleScroll = (start: number) => {
+        const saucesPosition = saucesTitleRef.current!.getBoundingClientRect().y;
+        const mainPosition = mainTitleRef.current!.getBoundingClientRect().y;
 
         if (saucesPosition <= start && mainPosition > start) {
             setCurrent('two')
@@ -108,7 +111,7 @@ const BurgerIngredients = (props) => {
 
 
     if (data != undefined) {
-        data.forEach((item) => {
+        data.forEach((item: TItem) => {
             if (item.type === 'bun') {
                 buns.push(item);
             } else if (item.type === 'sauce') {
@@ -155,17 +158,6 @@ const BurgerIngredients = (props) => {
         </section >
     )
 }
-
-Ingredient.propTypes = {
-    item: PropTypes.object.isRequired,
-    menuCounter: PropTypes.array
-}
-
-BurgerIngredients.propTypes = {
-    data: PropTypes.arrayOf(itemObj),
-    showModalWindow: PropTypes.func
-};
-
 
 
 export default BurgerIngredients;
