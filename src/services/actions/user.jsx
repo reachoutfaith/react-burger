@@ -185,7 +185,7 @@ export function refreshTokenThunk() {
                     });
                 }
             }).catch((err) => {
-                //console.log(err)
+
                 dispatch({
                     type: REFRESH_TOKEN_ERROR
                 });

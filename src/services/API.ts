@@ -12,7 +12,18 @@ import {
 
 
 export const checkResponse = (res: CustomResponse<JSON>) => {
-    return res.ok ? res.json() : res.json().then((err) => Promise.reject(`Ошибка ${res.status}`));
+    try {
+        if (res.ok) {
+            return res.json()
+        } else {
+            return res.json().then((err) => Promise.reject(`Ошибка ${res.status}`));
+        }
+    } catch (err) {
+        console.log(err)
+    }
+
+    //previous solution
+    // return res.ok ? res.json() : res.json().then((err) => Promise.reject(`Ошибка ${res.status}`));
 };
 
 export const URL = 'https://norma.nomoreparties.space/api';
@@ -20,6 +31,7 @@ export const URL = 'https://norma.nomoreparties.space/api';
 export const fetchIngredients = async () => {
     const data = await fetch(URL + '/ingredients').then(checkResponse) as TItem[];
     return data
+
 }
 
 export const fetchOrderIngredients = async (orderItems: TItem[]) => {
@@ -34,6 +46,7 @@ export const fetchOrderIngredients = async (orderItems: TItem[]) => {
 
     console.log('fetch order items ', data)
     return data
+
 }
 
 export const resetPasswordRequest = async (email: { email: string }) => {

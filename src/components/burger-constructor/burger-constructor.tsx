@@ -63,8 +63,8 @@ const DraggableIngredient: FC<IIngredientProps> = ({ item, id, index, deleteItem
 
             const hoverBoundingRect = ref.current?.getBoundingClientRect();
             const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-            const clientOffset = monitor.getClientOffset();
-            const hoverClientY = (clientOffset as ClientOffset).y - hoverBoundingRect.top;
+            const clientOffset = monitor.getClientOffset() as ClientOffset;
+            const hoverClientY = clientOffset.y - hoverBoundingRect.top;
             if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
                 return;
             }
@@ -104,7 +104,7 @@ const DraggableIngredient: FC<IIngredientProps> = ({ item, id, index, deleteItem
 
 const BurgerConstructor: FC = () => {
     const totalPrice = useSelector((store: any) => store.ingredients.totalPrice);
-    const data = useSelector((store: any) => store.ingredients.currentIngredients);
+    const ingredients = useSelector((store: any) => store.ingredients.currentIngredients);
     const isBunAdded = useSelector((store: any) => store.ingredients.isBunAdded);
     const bun = useSelector((store: any) => store.ingredients.bun);
     const dispatch = useDispatch();
@@ -116,8 +116,8 @@ const BurgerConstructor: FC = () => {
     const history = useHistory();
 
     const moveCard = useCallback((dragIndex: number, hoverIndex: number) => {
-        const dragCard = data[dragIndex];
-        const newCards = [...data];
+        const dragCard = ingredients[dragIndex];
+        const newCards = [...ingredients];
         newCards.splice(dragIndex, 1);
         newCards.splice(hoverIndex, 0, dragCard);
 
@@ -125,21 +125,20 @@ const BurgerConstructor: FC = () => {
             type: CHANGE_INGREDIENTS_POSITION,
             newCards
         })
-    }, [data]);
+    }, [ingredients]);
 
 
     function showModalWindow() {
-        //event.preventDefault();
-        const items = data.map((item: TItem) => item._id);
+        const ingredientsIds = ingredients.map((item: TItem) => item._id);
 
         if (!isAuthenticated && Object.keys(user).length <= 0) {
             history.push({ pathname: '/login' })
         } else {
-            if (isBunAdded && items == undefined) {
+            if (isBunAdded && ingredientsIds == undefined) {
                 dispatch(sendOrderItems([bun._id]));
                 setShowModal(true)
-            } else if (isBunAdded && items !== undefined) {
-                let elements: string[] = items.concat(bun._id)
+            } else if (isBunAdded && ingredientsIds !== undefined) {
+                let elements: string[] = ingredientsIds.concat(bun._id)
                 dispatch(sendOrderItems(elements));
                 setShowModal(true)
             } else {
@@ -196,7 +195,7 @@ const BurgerConstructor: FC = () => {
     }
 
     function deleteItem(item: TItem) {
-        let elemIndex: number = data.findIndex((elem: TItem) => elem._id === item._id);
+        let elemIndex: number = ingredients.findIndex((elem: TItem) => elem._id === item._id);
         dispatch({
             type: DELETE_BURGER_INGREDIENT,
             item,
@@ -250,7 +249,7 @@ const BurgerConstructor: FC = () => {
             </div>}
 
             <section className={` ${BurgerConstructorStyle.scrollArea} mt-2 mb-2`} >
-                {data.length > 0 && data.map((item: TItem, i: number) =>
+                {ingredients.length > 0 && ingredients.map((item: TItem, i: number) =>
                     <DraggableIngredient moveCard={moveCard} deleteItem={deleteItem} item={item} index={i} key={i + item._id} />)}
             </section>
             {

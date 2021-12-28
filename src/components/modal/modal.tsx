@@ -13,9 +13,12 @@ export interface IComponentProps {
 }
 
 const Modal: FC<IComponentProps> = ({ title, closeModal, children }) => {
+    // ESC button on keyboard
+    const keyboardESC = 27;
 
     const closeModalWithKey = (e: KeyboardEvent) => {
-        if (e.keyCode === 27) {
+
+        if (e.keyCode === keyboardESC) {
             closeModal()
         }
     };

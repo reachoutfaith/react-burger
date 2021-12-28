@@ -13,8 +13,8 @@ import { NameInput } from '../components/custom/input/name-input';
 import { TFetchResponse, TGetUserInfo, TUpdateUserInfo } from '../components/utils/types';
 
 type TProfileForm = {
-    name: string | any;
-    email: string | any;
+    name: string;
+    email: string;
     password: string
 }
 

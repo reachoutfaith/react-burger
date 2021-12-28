@@ -4,7 +4,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 
 
 const AppHeader = () => {
-    const { pathname } = useLocation<any>();
+    const { pathname } = useLocation<string>();
 
     return (
         <header className={`${AppHeaderStyle.header}`}>
