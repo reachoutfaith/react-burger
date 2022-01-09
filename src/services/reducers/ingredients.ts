@@ -11,12 +11,15 @@ import {
     CHANGE_INGREDIENTS_POSITION,
     ADD_ITEM_TO_COUNTER,
     DELETE_ITEM_FROM_COUNTER
-} from '../actions/ingredients';
+} from '../constants/ingredients';
 
-import initialState from '../store';
+import initialState, { TInitialState } from '../store';
+
+import { TIngredientsActions } from '../actions/ingredients'
 
 
-export const ingredientsReducer = (state = initialState, action) => {
+
+export const ingredientsReducer = (state = initialState, action: TIngredientsActions): TInitialState => {
     switch (action.type) {
         case GET_BURGER_INGREDIENTS_REQUEST: {
             return { ...state, ingredientsRequest: true }
@@ -50,7 +53,10 @@ export const ingredientsReducer = (state = initialState, action) => {
         }
         case SEND_ORDER_ITEMS_SUCCESS: {
             return {
-                ...state, sendOrderSuccess: true, sendOrderRequest: false, order: action.order,
+                ...state,
+                sendOrderSuccess: true,
+                sendOrderRequest: false,
+                order: action.order!["number"],
                 currentIngredients: [],
                 bun: {},
                 isBunAdded: false,

@@ -4,8 +4,8 @@ import { Counter, Tab, CurrencyIcon } from '@ya.praktikum/react-developer-burger
 import { TItem } from '../utils/types';
 import { ItemTypes } from '../utils/ItemTypes';
 import { useDrag } from 'react-dnd';
-import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
+import { useSelector, useDispatch } from '../../services/hooks';
 
 interface IBurgerComponentProps {
     showModalWindow: Function;
@@ -23,7 +23,7 @@ const Ingredient: FC<IIngredientProps> = ({ item, handleModalOpen }) => {
     const dispatch = useDispatch();
     const history = useHistory();
     const location = useLocation();
-    const menuCounter = useSelector((store: any) => store.ingredients.counterIngredients);
+    const menuCounter = useSelector((store) => store.ingredients.counterIngredients);
     const element: TItemWithCounter[] = useMemo(() => (menuCounter.filter((elem: TItemWithCounter) => elem._id === item._id)), [menuCounter])
 
     if (element[0]["counter"] !== undefined && element[0]["counter"] >= 1) {
@@ -53,6 +53,7 @@ const Ingredient: FC<IIngredientProps> = ({ item, handleModalOpen }) => {
         });
     };
 
+
     return (
         <div ref={drag} className={`${BurgerIngredientsStyle.card}`} onClick={() => { handleClick(item) }}>
             {count > 0 && <Counter count={count} size="default" />}
@@ -65,7 +66,7 @@ const Ingredient: FC<IIngredientProps> = ({ item, handleModalOpen }) => {
 
 const BurgerIngredients: FC<IBurgerComponentProps> = ({ showModalWindow }) => {
     const [current, setCurrent] = React.useState('one');
-    const data = useSelector((store: any) => store.ingredients.ingredients);
+    const ingredients = useSelector((store) => store.ingredients.ingredients);
     const dispatch = useDispatch();
     const buns: TItem[] = [];
     const sauces: TItem[] = [];
@@ -110,8 +111,8 @@ const BurgerIngredients: FC<IBurgerComponentProps> = ({ showModalWindow }) => {
 
 
 
-    if (data != undefined) {
-        data.forEach((item: TItem) => {
+    if (ingredients != undefined) {
+        ingredients.forEach((item: TItem) => {
             if (item.type === 'bun') {
                 buns.push(item);
             } else if (item.type === 'sauce') {

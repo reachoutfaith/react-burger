@@ -2,7 +2,7 @@ import React, { useCallback, useState, FC, ChangeEvent } from 'react';
 import { useHistory, Redirect, useLocation } from 'react-router-dom';
 import style from './login.module.css';
 import { Button } from '@ya.praktikum/react-developer-burger-ui-components';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector, useDispatch } from '../services/hooks';
 import { loginUserThunk } from '../services/actions/user';
 import { PasswordInput } from '../components/custom/input/password-input';
 import { EmailInput } from '../components/custom/input/email-input';
@@ -16,9 +16,9 @@ const LoginPage: FC = () => {
     const history = useHistory();
     const location = useLocation<{ from?: Location<{} | null | undefined> }>();
     const dispatch = useDispatch();
-    const hasError = useSelector((store: any) => store.profile.loginUserFailed);
-    const error = useSelector((store: any) => store.profile.errorMessage);
-    const isAuthenticated = useSelector((store: any) => store.profile.isAuthenticated);
+    const hasError = useSelector((store) => store.profile.loginUserFailed);
+    const error = useSelector((store) => store.profile.errorMessage);
+    const isAuthenticated = useSelector((store) => store.profile.isAuthenticated);
 
 
     const onChange = (e: ChangeEvent<HTMLInputElement>) => {

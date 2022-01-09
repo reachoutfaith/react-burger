@@ -15,11 +15,13 @@ import {
     REFRESH_TOKEN_SUCCESS,
     REFRESH_TOKEN_ERROR,
     LOGOUT_SUCCESS
-} from '../actions/user';
+} from '../constants/user';
 
-import initialState from '../store';
+import { TUserProfileActions } from '../actions/user';
 
-export const profileReducer = (state = initialState, action) => {
+import initialState, { TInitialState } from '../store';
+
+export const profileReducer = (state = initialState, action: TUserProfileActions): TInitialState => {
     switch (action.type) {
         case SAVE_PASSWORD_REQUEST: {
             return {
@@ -31,8 +33,7 @@ export const profileReducer = (state = initialState, action) => {
             return {
                 ...state,
                 savePasswordRequest: false,
-                savePasswordSuccess: true,
-                user: { ...state.user, password: action.password }
+                savePasswordSuccess: true
             }
         }
         case SAVE_PASSWORD_ERROR: {
@@ -41,7 +42,6 @@ export const profileReducer = (state = initialState, action) => {
                 savePasswordRequest: false,
                 savePasswordFailed: true,
                 errorMessage: action.errorMessage
-
             }
         }
         case CREATE_USER_REQUEST: {
@@ -57,8 +57,6 @@ export const profileReducer = (state = initialState, action) => {
                 createUserRequest: false,
                 createUserSuccess: true,
                 user: action.user,
-                accessToken: action.accessToken,
-                refreshToken: action.refreshToken,
                 isAuthenticated: true
 
             }
@@ -86,7 +84,6 @@ export const profileReducer = (state = initialState, action) => {
                 loginUserSuccess: true,
                 isAuthenticated: true,
                 user: action.user
-
             }
         }
         case LOGIN_USER_ERROR: {

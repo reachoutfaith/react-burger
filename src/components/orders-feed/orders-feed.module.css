@@ -1,0 +1,129 @@
+.wrapper {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.wrapper__listMode {
+    /* width: 584px; */
+    /* height: 214px; */
+    background: #1C1C21;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 0px 2px rgba(0, 0, 0, 0.06), 0px 0px 1px rgba(0, 0, 0, 0.04);
+    border-radius: 40px;
+}
+
+.order__date {
+    margin-left: auto;
+}
+
+.order__name {
+    width: 100%;
+}
+
+.order__list {
+    width: 436px;
+    display: flex;
+    overflow: hidden;
+}
+
+.burgerItem__iconCrop {
+    width: 56px;
+    height: 56px;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 1px solid #4C4CFF;
+}
+
+.burgerItem__icon {
+    height: 56px;
+    
+}
+
+.order__priceNumber {
+    margin-right: 9px;
+}
+
+.order__price {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
+/* Full Mode */
+
+.wrapper__fullMode {
+    display: flex;
+    flex-wrap: wrap;
+    width: 640px;
+    margin: 2rem auto;
+    box-sizing: border-box;
+    max-height: 70vh;
+    overflow-y: scroll;
+}
+.wrapper__fullMode::-webkit-scrollbar {
+    width: 8px;
+    background-color: #2F2F37;;
+}
+.wrapper__fullMode::-webkit-scrollbar-thumb {
+    background: #8585AD;
+}
+
+.order__numberFM {
+    width: 100%;
+    text-align: center;
+}
+
+.order__nameFM {
+    line-height: 30px;
+}
+
+.order__statusDone {
+    width: 100%;
+    color: #00CCCC;
+}
+
+.order__status {
+    width: 100%;
+    color: #fff;
+}
+
+.title {
+    width: 100%;
+}
+
+.order__listFM {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    min-height: 100px; 
+    max-height: 400px;
+    overflow-y: scroll;
+    
+}
+
+.order__listFM::-webkit-scrollbar {
+    width: 8px;
+    background-color: #2F2F37;;
+}
+.order__listFM::-webkit-scrollbar-thumb {
+    background: #8585AD;
+}
+
+.order__listItemFM {
+    display: flex;
+    width: 100%;
+    align-items: center;
+}
+
+.burgerItem__priceCard {
+    display: flex;
+    margin: auto 0rem auto auto;
+}
+
+.order__dateFM {
+    width: 50%;
+}
+
+.order__priceFM {
+    width: 50%;
+    justify-content: flex-end;
+}

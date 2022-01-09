@@ -1,18 +1,18 @@
 import React, { useMemo, FC } from 'react';
 import IngredientDetailsStyle from './ingredient-details.module.css';
 import { TItem } from '../utils/types';
-import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { useSelector } from '../../services/hooks';
 
 const IngredientDetails: FC = () => {
 
     const { id } = useParams<{ id: string }>();
-    const data = useSelector((store: any) => store.ingredients.ingredients);
-    const isLoading = useSelector((store: any) => store.ingredients)
+    const ingredients = useSelector((store) => store.ingredients.ingredients);
+    const isLoading = useSelector((store) => store.ingredients)
 
     const currentIngredient = useMemo(() => {
-        return data.find((item: TItem) => item._id === id);
-    }, [data]);
+        return ingredients.find((item: TItem) => item._id === id);
+    }, [ingredients]);
 
 
     if (!isLoading) {

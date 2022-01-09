@@ -13,9 +13,9 @@ const AppHeader = () => {
                     <BurgerIcon type={`${pathname === '/' ? 'primary' : 'secondary'}`} />
                     <span className={`${pathname === '/' ? 'text_color_active' : 'text_color_inactive'} text text_type_main-default  ${AppHeaderStyle.linkText}`}>Конструктор</span>
                 </NavLink>
-                <NavLink to='/orders' className={`${AppHeaderStyle.link}`} activeClassName={AppHeaderStyle.linkActive}>
-                    <ListIcon type={`${pathname === '/orders' ? 'primary' : 'secondary'}`} />
-                    <span className={`${pathname === '/orders' ? 'text_color_active' : 'text_color_inactive'} text text_type_main-default  ${AppHeaderStyle.linkText}`}>Лента заказов</span>
+                <NavLink to='/feed' className={`${AppHeaderStyle.link}`} activeClassName={AppHeaderStyle.linkActive}>
+                    <ListIcon type={`${pathname === '/feed' ? 'primary' : 'secondary'}`} />
+                    <span className={`${pathname === '/feed' ? 'text_color_active' : 'text_color_inactive'} text text_type_main-default  ${AppHeaderStyle.linkText}`}>Лента заказов</span>
                 </NavLink>
                 <Link to="/" className={`${AppHeaderStyle.logo} p-4  p-4`}>
                     <Logo />

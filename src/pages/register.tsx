@@ -3,7 +3,7 @@ import { useHistory, Redirect, useLocation } from 'react-router-dom';
 import { createUserThunk } from '../services/actions/user';
 import style from './login.module.css';
 import { Button } from '@ya.praktikum/react-developer-burger-ui-components';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from '../services/hooks';
 import { PasswordInput } from '../components/custom/input/password-input';
 import { EmailInput } from '../components/custom/input/email-input';
 import { NameInput } from '../components/custom/input/name-input';
@@ -15,9 +15,9 @@ const RegisterPage: FC = () => {
     const location = useLocation<{ from?: Location<{} | null | undefined> }>();
     const history = useHistory();
     const dispatch = useDispatch();
-    const hasError = useSelector((store: any) => store.profile.createUserFailed);
-    const error = useSelector((store: any) => store.profile.errorMessage);
-    const isAuthenticated = useSelector((store: any) => store.profile.isAuthenticated);
+    const hasError = useSelector((store) => store.profile.createUserFailed);
+    const error = useSelector((store) => store.profile.errorMessage);
+    const isAuthenticated = useSelector((store) => store.profile.isAuthenticated);
 
 
     const onChange = (e: ChangeEvent<HTMLInputElement>) => {
