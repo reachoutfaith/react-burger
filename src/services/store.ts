@@ -1,4 +1,4 @@
-import { TItem, TFetchOrderIngredients, TUser, TOrder, TFetchResponse } from '../components/utils/types';
+import { TItem, TUser } from '../components/utils/types';
 
 // Types for Initial State of the Store
 export type TInitialState = {

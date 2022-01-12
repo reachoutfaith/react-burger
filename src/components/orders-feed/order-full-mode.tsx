@@ -48,7 +48,7 @@ const OrderFullMode: FC = () => {
         return () => {
             if (!location.state) dispatch({ type: WS_CONNECTION_CLOSED });
         };
-    }, []);
+    }, [dispatch, location.state]);
 
 
     if (!order) return null;
@@ -62,7 +62,7 @@ const OrderFullMode: FC = () => {
             <div className={`${style.order__list} ${style.order__listFM} mt-6 mb-6 pr-4`}>
                 {ingredientsOfCurrentOrder.map((item, index) => {
                     return (<div key={item._id + index} className={`mb-6 ${style.order__listItem} ${style.order__listItemFM}`}>
-                        <img src={item.image_mobile} className={`${style.burgerItem__icon}`} />
+                        <img alt="ingredient" src={item.image_mobile} className={`${style.burgerItem__icon}`} />
                         <span className={`ml-4 text text_type_main-default ${style.burgerItem__name}`}>{item.name}</span>
                         <div className={`${style.burgerItem__priceCard} mt-10 `}>
                             <span className={`text text_type_main-medium ${style.burgerItem__price} ml-2 mr-2`}>{item.price}</span>

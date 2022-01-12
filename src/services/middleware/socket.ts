@@ -1,27 +1,22 @@
 import type { Middleware, MiddlewareAPI } from 'redux';
-import { TWSActions } from '../actions/orders';
 import { AppDispatch, RootState } from '../types/index';
-import {
-    WS_CONNECTION_CLOSED,
-    WS_CONNECTION_ERROR,
-    WS_CONNECTION_START,
-    WS_CONNECTION_SUCCESS,
-    WS_CONNECTION_GET_MESSAGE
-} from '../constants/socket';
+import { TWSActions } from '../actions/orders';
 
-export const socketMiddleware = (): Middleware => {
+export const socketMiddleware = (wsActions: any): Middleware => {
     return ((store: MiddlewareAPI<AppDispatch, RootState>) => {
         let socket: WebSocket | null = null;
         return next => (action: TWSActions) => {
             const { dispatch, getState } = store;
             const { type, payload } = action;
+            const { WSStart, WSSend, WSonOpen, WSonClose, WSonError, WSonMessage } = wsActions;
 
-            if (type === WS_CONNECTION_START) socket = new WebSocket(payload);
+            if (type === WSStart) socket = new WebSocket(payload);
+
             if (socket) {
-                socket.onopen = event => dispatch({ type: WS_CONNECTION_SUCCESS, payload: event });
-                socket.onerror = event => dispatch({ type: WS_CONNECTION_ERROR, payload: event });
-                socket.onclose = event => dispatch({ type: WS_CONNECTION_CLOSED, payload: event });
-                socket.onmessage = event => dispatch({ type: WS_CONNECTION_GET_MESSAGE, payload: JSON.parse(event.data) });
+                socket.onopen = event => dispatch({ type: WSonOpen, payload: event });
+                socket.onerror = event => dispatch({ type: WSonError, payload: event });
+                socket.onclose = event => dispatch({ type: WSonClose, payload: event });
+                socket.onmessage = event => dispatch({ type: WSonMessage, payload: JSON.parse(event.data) });
             }
             next(action);
         };

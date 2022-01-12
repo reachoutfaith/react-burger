@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useState, FC } from 'react';
+import React, { useCallback, useEffect, FC } from 'react';
 import { Switch, Route, useHistory, useLocation } from 'react-router-dom';
 import AppHeader from '../app-header/app-header';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from '../../services/hooks';
 import { getIngredients } from '../../services/actions/ingredients';
 import LoginPage from '../../pages/login';
 import RegisterPage from '../../pages/register';
@@ -21,7 +21,6 @@ const App: FC = () => {
 
   const dispatch = useDispatch();
   const history = useHistory();
-  const [showModal, setShowModal] = useState<boolean>(false);
   const location = useLocation<any>();
   const backgroundIngredients = location.state?.background;
   const backgroundFeed = location.state?.backgroundFeed;
@@ -33,14 +32,8 @@ const App: FC = () => {
       dispatch(refreshTokenThunk());
     }, [dispatch])
 
-  function showModalWindow() {
-    setShowModal(true);
-  }
-
 
   function closeModalWindow() {
-    setShowModal(false);
-
     if (prevPath && prevPath.length > 0) {
       history.replace(prevPath);
     } else {
@@ -73,7 +66,7 @@ const App: FC = () => {
 
       <Switch location={backgroundIngredients ?? backgroundFeed ?? backgroundProfile ?? location}>
         <Route path="/" exact={true}>
-          <BurgerConstructorPage handleOpenModal={showModalWindow} />
+          <BurgerConstructorPage />
         </Route>
         <Route path="/login" exact={true}  >
           <LoginPage />

@@ -33,7 +33,7 @@ const ForgotPasswordPage: FC = () => {
                 setError(resetPassword.message);
                 setHasError(true);
             }
-        }, []
+        }, [form, history]
     )
 
     const login = useCallback(() => {

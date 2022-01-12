@@ -12,7 +12,7 @@ const IngredientDetails: FC = () => {
 
     const currentIngredient = useMemo(() => {
         return ingredients.find((item: TItem) => item._id === id);
-    }, [ingredients]);
+    }, [ingredients, id]);
 
 
     if (!isLoading) {

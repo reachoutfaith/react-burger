@@ -2,7 +2,6 @@ import React, { FC, useMemo } from 'react';
 import style from './orders-feed.module.css';
 import { CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 import { getDate } from '../../services/utils';
-import ingredientsImage from '../../images/ingredients.png';
 import { useSelector } from '../../services/hooks';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -38,6 +37,28 @@ const OrderCutMode: FC<TProps> = (props) => {
         });
         return totalSum;
     }, [ingredients, propsIngredients]);
+
+    // Get All Orders Images
+    const orderIngredientsImages = useMemo(() => {
+        let images = [] as string[];
+        ingredients!.forEach(item => {
+            for (let i = 0; i < propsIngredients.length; i++) {
+                if (item._id === propsIngredients[i]) {
+                    const src = item['image_mobile'] as string;
+                    if (!images.includes(src)) {
+                        images.push(src)
+                    }
+                }
+            }
+        });
+
+        if (images.length > 5) {
+            return images.splice(0, 5)
+        }
+
+        return images;
+
+    }, [ingredients, propsIngredients])
 
     const handleClick = () => {
 
@@ -75,8 +96,9 @@ const OrderCutMode: FC<TProps> = (props) => {
                 <span className={`text text_type_main-default ${style.order__status} mt-2`}>{status}</span>
             )}
             <div className={`${style.order__list} mt-6 mb-6`}>
-                <div className={`${style.order__listItem}`}>
-                    <img src={ingredientsImage} className={`${style.burgerItem__icon}`} />
+                <div className={`${style.order__listItem} ${style.order__listItemCM}`}>
+
+                    {orderIngredientsImages.map((item, index) => <img alt="ingredient" key={index} src={item} className={`${style.burgerItem__icon} ${style.burgerItem__iconCM}`} />)}
                 </div >
                 <div className={`${style.order__price} ml-6 mt-6 mb-6 pt-11 pb-11`}>
                     <span className={`text text_type_main-medium ${style.order__priceNumber}`}>{orderTotalSum}</span>

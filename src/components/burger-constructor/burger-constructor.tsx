@@ -125,7 +125,7 @@ const BurgerConstructor: FC = () => {
             type: CHANGE_INGREDIENTS_POSITION,
             newCards
         })
-    }, [ingredients]);
+    }, [dispatch, ingredients]);
 
 
     function showModalWindow() {
@@ -134,7 +134,7 @@ const BurgerConstructor: FC = () => {
         if (!isAuthenticated && Object.keys(user).length <= 0) {
             history.push({ pathname: '/login' })
         } else {
-            if (isBunAdded && ingredientsIds == undefined) {
+            if (isBunAdded && ingredientsIds === undefined) {
                 dispatch(sendOrderItems([bun._id]));
                 setShowModal(true)
             } else if (isBunAdded && ingredientsIds !== undefined) {

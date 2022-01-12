@@ -1,6 +1,5 @@
 import { getCookie } from './utils';
 import {
-    TItem,
     TIngredients,
     TFetchResponse,
     TFetchOrderIngredients,
@@ -20,18 +19,8 @@ export const WS_URL = 'wss://norma.nomoreparties.space/orders';
 
 
 export const checkResponse = (res: CustomResponse<JSON>) => {
-    try {
-        if (res.ok) {
-            return res.json()
-        } else {
-            return res.json().then((err) => Promise.reject(res));
-        }
-    } catch (err) {
-        console.log(err)
-    }
-
     //previous solution
-    // return res.ok ? res.json() : res.json().then((err) => Promise.reject(`Ошибка ${res.status}`));
+    return res.ok ? res.json() : res.json().then((err) => Promise.reject(`Ошибка ${res.status}`));
 };
 
 
@@ -45,10 +34,12 @@ export const fetchIngredients = async () => {
 
 export const fetchOrderIngredients = async (orderItems: string[]) => {
     const body = { ingredients: orderItems };
+    const accessToken = getCookie('accessToken');
     const data = await fetch(URL + '/orders', {
         method: "POST",
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${accessToken}`
         },
         body: JSON.stringify(body)
     }).then(checkResponse) as TFetchOrderIngredients;

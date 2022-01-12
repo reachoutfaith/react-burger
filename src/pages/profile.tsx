@@ -27,15 +27,7 @@ const ProfilePage: FC = () => {
     let path = location.pathname;
     const accessToken = getCookie('accessToken');
 
-    useEffect(() => {
-        // uploadUserInfo();
-        dispatch({ type: WS_CONNECTION_START, payload: `${WS_URL}/all?token=${accessToken}` });
-        return () => {
-            dispatch({ type: WS_CONNECTION_CLOSED });
-        };
-    }, [accessToken, dispatch])
-
-    const uploadUserInfo = async () => {
+    const uploadUserInfo = useCallback(async () => {
         if (!user || Object.keys(user).length <= 0) {
             const getUserRequest: TGetUserInfo = await getUserInfo();
 
@@ -52,10 +44,21 @@ const ProfilePage: FC = () => {
                 }
             }
         }
-    }
+    }, [dispatch, prevState, user])
+
+    useEffect(() => {
+        uploadUserInfo();
+    }, [uploadUserInfo])
+
+    useEffect(() => {
+        dispatch({ type: WS_CONNECTION_START, payload: `${WS_URL}/all?token=${accessToken}` });
+        return () => {
+            dispatch({ type: WS_CONNECTION_CLOSED });
+        };
+    }, [accessToken, dispatch])
 
 
-    const signOut = async () => {
+    const signOut = useCallback(async () => {
         const logoutRequest: TFetchResponse = await logoutUser();
 
         if (logoutRequest.success === true) {
@@ -65,7 +68,7 @@ const ProfilePage: FC = () => {
                 type: LOGOUT_SUCCESS
             })
         }
-    }
+    }, [dispatch])
 
     const logout = useCallback(
         () => {

@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Route, Redirect, useLocation } from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
 import { useSelector } from '../../services/hooks';
 
 interface IProtectedRouteProps {
@@ -9,8 +9,6 @@ interface IProtectedRouteProps {
 }
 
 const ProtectedRoute: FC<IProtectedRouteProps> = ({ children, ...rest }) => {
-
-    const location = useLocation();
     const user = useSelector((store) => store.profile.user);
 
     return (

@@ -40,7 +40,7 @@ const ResetPasswordPage: FC = () => {
             e.preventDefault();
 
             dispatch(savePasswordThunk(form));
-        }, [form]
+        }, [dispatch, form]
     )
 
     if (isAuthenticated) {

@@ -27,7 +27,7 @@ const OrdersFeedPage: FC = () => {
         return () => {
             dispatch({ type: WS_CONNECTION_CLOSED });
         };
-    }, []);
+    }, [dispatch]);
 
 
     return (

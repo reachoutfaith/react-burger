@@ -35,12 +35,8 @@ const UserSettings: FC = () => {
 
     };
 
-    useEffect(() => {
-        uploadUserInfo();
-        setForm({ name: user.name, email: user.email, password: 'qazswx' })
-    }, [user, history])
 
-    const uploadUserInfo = async () => {
+    const uploadUserInfo = useCallback(async () => {
         if (!user || Object.keys(user).length <= 0) {
             const getUserRequest: TGetUserInfo = await getUserInfo();
 
@@ -57,7 +53,12 @@ const UserSettings: FC = () => {
                 }
             }
         }
-    }
+    }, [dispatch, prevState, user])
+
+    useEffect(() => {
+        uploadUserInfo();
+        setForm({ name: user.name, email: user.email, password: 'qazswx' })
+    }, [uploadUserInfo, user, history])
 
 
     const updateUserInfo = useCallback(
@@ -81,7 +82,7 @@ const UserSettings: FC = () => {
                 })
             }
 
-        }, [form, user]
+        }, [dispatch]
     );
 
     const cancelUserChanges = useCallback(
@@ -101,7 +102,7 @@ const UserSettings: FC = () => {
                 })
             }
 
-        }, [form]
+        }, [dispatch]
     );
 
     return (

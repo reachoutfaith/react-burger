@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, FC, ChangeEvent } from 'react';
+import React, { FC } from 'react';
 import style from '../../pages/profile.module.css';
 import OrderCutMode from '../orders-feed/order-cut-mode';
 import { useSelector } from '../../services/hooks';
