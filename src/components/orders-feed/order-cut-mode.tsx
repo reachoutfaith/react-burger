@@ -62,6 +62,8 @@ const OrderCutMode: FC<TProps> = (props) => {
 
     const handleClick = () => {
 
+        console.log('location.pathname order ', location.pathname)
+
         if (location.pathname === '/feed') {
             history.replace({
                 pathname: `/feed/${props._id}`,
@@ -73,11 +75,13 @@ const OrderCutMode: FC<TProps> = (props) => {
         };
 
         if (location.pathname === '/profile/orders') {
+
             history.replace({
                 pathname: `/profile/orders/${props._id}`,
                 state: {
                     backgroundProfile: location,
-                    prevPath: location.pathname
+                    prevPath: location.pathname,
+                    from: location
                 }
             });
         }

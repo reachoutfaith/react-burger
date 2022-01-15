@@ -4,11 +4,9 @@ import { Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import { useSelector, useDispatch } from '../../services/hooks';
 import {
     UPDATE_USER_ERROR,
-    UPDATE_USER_SUCCESS,
-    GET_USER_SUCCESS
-} from '../../services/constants/user'
-import { refreshTokenThunk } from '../../services/actions/user'
-import { getUserInfo, updateUser } from '../../services/API';
+    UPDATE_USER_SUCCESS
+} from '../../services/constants/user';
+import { updateUser } from '../../services/API';
 import { useHistory } from 'react-router-dom';
 import { PasswordInput } from '../custom/input/password-input';
 import { EmailInput } from '../custom/input/email-input';
@@ -35,37 +33,16 @@ const UserSettings: FC = () => {
 
     };
 
-
-    const uploadUserInfo = useCallback(async () => {
-        if (!user || Object.keys(user).length <= 0) {
-            const getUserRequest: TGetUserInfo = await getUserInfo();
-
-            if (getUserRequest.success === false) {
-                dispatch(refreshTokenThunk());
-            } else {
-                dispatch({
-                    type: GET_USER_SUCCESS,
-                    user: getUserRequest.user
-                })
-
-                if (Object.keys(prevState).length <= 0) {
-                    setPrevState(getUserRequest.user)
-                }
-            }
-        }
-    }, [dispatch, prevState, user])
-
     useEffect(() => {
-        uploadUserInfo();
+
         setForm({ name: user.name, email: user.email, password: 'qazswx' })
-    }, [uploadUserInfo, user, history])
+    }, [user, history])
 
 
     const updateUserInfo = useCallback(
 
         async (form, user) => {
             setPrevState({ ...user })
-
 
             const updateUserRequest: TGetUserInfo = await updateUser(form);
 

@@ -41,7 +41,7 @@ const Ingredient: FC<IIngredientProps> = ({ item }) => {
         history.push({
             pathname: `/ingredients/${item._id}`,
             state: {
-                background: location
+                backgroundIngredients: location
             }
         });
     };

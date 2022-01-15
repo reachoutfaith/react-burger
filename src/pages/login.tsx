@@ -41,6 +41,7 @@ const LoginPage: FC = () => {
     )
 
 
+    console.log('location ', location)
     if (isAuthenticated) {
         return <Redirect to={location.state?.from || '/'} />;
     }

@@ -36,7 +36,7 @@ const OrdersFeedPage: FC = () => {
             <div className={`${style.feed__wrapper}`}>
                 <ul className={`${style.feed__list}`}>
                     {orders.map((item, index) => {
-                        return <li className={`${style.feed__listItem} mb-4`} key={item._id + index}>
+                        return (<li className={`${style.feed__listItem} mb-4`} key={item._id + index}>
                             <OrderCutMode
                                 _id={item._id}
                                 createdAt={item.createdAt}
@@ -45,7 +45,7 @@ const OrdersFeedPage: FC = () => {
                                 number={item.number}
                                 name={item.name}
                                 ingredients={item.ingredients} />
-                        </li>
+                        </li>)
                     })}
                 </ul>
                 <div className={`${style.tracker} ml-15`}>

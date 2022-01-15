@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, FC } from 'react';
 import { Switch, Route, useHistory, useLocation } from 'react-router-dom';
 import AppHeader from '../app-header/app-header';
-import { useDispatch } from '../../services/hooks';
+import { useDispatch, useSelector } from '../../services/hooks';
 import { getIngredients } from '../../services/actions/ingredients';
 import LoginPage from '../../pages/login';
 import RegisterPage from '../../pages/register';
@@ -17,20 +17,35 @@ import IngredientDetails from '../ingredient-details/ingredient-details';
 import { refreshTokenThunk } from '../../services/actions/user';
 import OrderFullMode from '../orders-feed/order-full-mode';
 
+import { TGetUserInfo } from '../utils/types';
+import { getUserInfo } from '../../services/API';
+import { GET_USER_SUCCESS } from '../../services/constants/user';
+
 const App: FC = () => {
 
   const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation<any>();
-  const backgroundIngredients = location.state?.background;
+  const backgroundIngredients = location.state?.backgroundIngredients;
   const backgroundFeed = location.state?.backgroundFeed;
   const backgroundProfile = location.state?.backgroundProfile;
   const prevPath: string | undefined | null = location.state?.prevPath;
+  const isAuthenticated = useSelector(store => store.profile.isAuthenticated);
 
-  const uploadUserData = useCallback(
-    () => {
-      dispatch(refreshTokenThunk());
-    }, [dispatch])
+  const uploadUserInfo = useCallback(async () => {
+    if (!isAuthenticated) {
+      const getUserRequest: TGetUserInfo = await getUserInfo();
+
+      if (getUserRequest.success === false) {
+        dispatch(refreshTokenThunk());
+      } else {
+        dispatch({
+          type: GET_USER_SUCCESS,
+          user: getUserRequest.user
+        })
+      }
+    }
+  }, [dispatch, isAuthenticated])
 
 
   function closeModalWindow() {
@@ -44,12 +59,12 @@ const App: FC = () => {
 
   useEffect(
     () => {
+
+      uploadUserInfo();
       dispatch(getIngredients());
-      uploadUserData();
 
-    }, [dispatch, uploadUserData]
+    }, [dispatch, uploadUserInfo]
   )
-
 
   return (
     <>
