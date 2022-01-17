@@ -3,7 +3,7 @@ import { useHistory, Redirect, useLocation } from 'react-router-dom';
 import { savePasswordThunk } from '../services/actions/user';
 import style from './login.module.css';
 import { Button } from '@ya.praktikum/react-developer-burger-ui-components';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from '../services/hooks';
 import { PasswordInput } from '../components/custom/input/password-input';
 import { NameInput } from '../components/custom/input/name-input';
 import { Location } from "history";
@@ -23,9 +23,9 @@ const ResetPasswordPage: FC = () => {
     const history = useHistory();
     const location = useLocation<ILocation>();
     const dispatch = useDispatch();
-    const hasError = useSelector((store: any) => store.profile.savePasswordFailed);
-    const error = useSelector((store: any) => store.profile.errorMessage);
-    const isAuthenticated = useSelector((store: any) => store.profile.isAuthenticated);
+    const hasError = useSelector((store) => store.profile.savePasswordFailed);
+    const error = useSelector((store) => store.profile.errorMessage);
+    const isAuthenticated = useSelector((store) => store.profile.isAuthenticated);
 
     const onChange = (e: ChangeEvent<HTMLInputElement>) => {
         setValue({ ...form, [e.target.name]: e.target.value });
@@ -40,7 +40,7 @@ const ResetPasswordPage: FC = () => {
             e.preventDefault();
 
             dispatch(savePasswordThunk(form));
-        }, [form]
+        }, [dispatch, form]
     )
 
     if (isAuthenticated) {

@@ -22,7 +22,6 @@ export interface CustomResponse<T> extends Body {
     json(): Promise<T>;
 };
 
-
 // Ingredient Item
 export type TItem = {
     _id: string,
@@ -36,7 +35,8 @@ export type TItem = {
     image: string,
     image_mobile?: string,
     image_large?: string,
-    __v?: number
+    __v?: number,
+    counter?: number
 }
 
 // InputForm - Props
@@ -58,6 +58,12 @@ export type TFetchResponse = {
     message?: string;
 }
 
+// Burger Ingredients onload from server
+export type TIngredients = TFetchResponse & {
+    data: TItem[],
+    success: boolean
+}
+
 // FetchOrderIngredients
 export type TFetchOrderIngredients = TFetchResponse & {
     name?: string,
@@ -65,7 +71,7 @@ export type TFetchOrderIngredients = TFetchResponse & {
 }
 
 export type TOrder = {
-    number: number
+    number: string;
 }
 
 // Register, Login New User 
@@ -80,6 +86,13 @@ export type TUser = {
     name: string;
 }
 
+// User 
+export type TUserResponse = {
+    user: TUser;
+    accessToken?: string;
+    refreshToken?: string;
+}
+
 // Refresh Token 
 export type TRefreshToken = Omit<TFetchSignUser, "user">;
 
@@ -91,5 +104,25 @@ export type TUpdateUserInfo = {
     name?: string;
     password?: string;
     email?: string
+}
+
+// Get All Orders
+export type TGetAllOrdersResponse = {
+    success: boolean,
+    orders?: TCreatedOrder[],
+    total?: number,
+    totalToday?: number
+}
+
+
+// Order Type
+export type TCreatedOrder = {
+    ingredients: string[],
+    _id: string,
+    status: string,
+    number: number,
+    createdAt: string,
+    updatedAt: string,
+    name: string
 }
 

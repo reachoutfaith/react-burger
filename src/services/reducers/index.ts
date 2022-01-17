@@ -1,8 +1,10 @@
 import { combineReducers } from 'redux';
 import { ingredientsReducer } from './ingredients';
-import { profileReducer } from '../reducers/profile';
+import { profileReducer } from './profile';
+import { ordersReducer } from './orders';
 
 export const rootReducer = combineReducers({
     ingredients: ingredientsReducer,
-    profile: profileReducer
+    profile: profileReducer,
+    orders: ordersReducer
 });

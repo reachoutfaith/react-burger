@@ -53,3 +53,18 @@
 .activeNavLink {
     color: #fff;
 }
+
+.ordersFeed {
+    max-height: 600px;
+    min-height: 300px;
+    overflow-y: scroll;
+    max-width: 840px;
+}
+
+.ordersFeed::-webkit-scrollbar {
+    width: 8px;
+    background-color: #2F2F37;;
+}
+.ordersFeed::-webkit-scrollbar-thumb {
+    background: #8585AD;
+}

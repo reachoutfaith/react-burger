@@ -1,0 +1,74 @@
+.wrapper {
+    max-width: 1240px;
+    margin: 0rem auto;
+}
+
+.feed__list {
+    margin-top: 2rem;
+}
+
+.feed__wrapper {
+    display: flex;
+    
+}
+
+.feed__list {
+    padding: 0rem;
+    list-style-type: none;
+    width: 560px;
+    min-height: 300px;
+    max-height: 600px; 
+     overflow-y: scroll;
+}
+
+.feed__listItem {
+    /* margin-right: 8px; */
+}
+
+.feed__list::-webkit-scrollbar {
+    width: 8px;
+    background-color: #2F2F37;
+}
+.feed__list::-webkit-scrollbar-thumb {
+    background: #8585AD;
+}
+
+.tracker {
+    display: flex;
+    flex-wrap: wrap;
+    width: 616px;
+    margin-top: 2rem;
+}
+
+.tracker__ordersWrapper {
+    display: flex;
+}
+
+.tracker__orders {
+    width: 280px;
+}
+
+.tracker__orderList {
+    padding: 0rem;
+    list-style-type: none;
+}
+
+.tracker__orderListItem {
+    font-size: 28px;
+    line-height: 24px;
+}
+
+.tracker__orderListItemDone {
+    color: #00CCCC;
+
+}
+
+.tracker__info {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.tracker__infoText {
+    text-shadow: 0px 0px 16px rgba(51, 51, 255, 0.25), 0px 0px 8px rgba(51, 51, 255, 0.25), 0px 4px 32px rgba(51, 51, 255, 0.5);
+}

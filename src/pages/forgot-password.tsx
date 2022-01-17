@@ -3,10 +3,10 @@ import { useHistory, Redirect, useLocation } from 'react-router-dom';
 import { resetPasswordRequest } from '../services/API';
 import style from './login.module.css';
 import { Button } from '@ya.praktikum/react-developer-burger-ui-components';
-import { useSelector } from 'react-redux';
 import { EmailInput } from '../components/custom/input/email-input';
 import { Location } from "history";
 import { TFetchResponse, TInputFormValues } from '../components/utils/types';
+import { useSelector } from '../services/hooks';
 
 type TEmail = Omit<TInputFormValues, "name" | "password">
 
@@ -16,7 +16,7 @@ const ForgotPasswordPage: FC = () => {
     const location = useLocation<{ from?: Location<{} | null | undefined> }>();
     const [hasError, setHasError] = useState<boolean>(false);
     const [error, setError] = useState<string | undefined>('');
-    const isAuthenticated = useSelector((store: any) => store.profile.isAuthenticated);
+    const isAuthenticated = useSelector((store) => store.profile.isAuthenticated);
 
     const onChange = (e: ChangeEvent<HTMLInputElement>) => {
         setValue({ email: e.target.value });
@@ -33,7 +33,7 @@ const ForgotPasswordPage: FC = () => {
                 setError(resetPassword.message);
                 setHasError(true);
             }
-        }, []
+        }, [form, history]
     )
 
     const login = useCallback(() => {

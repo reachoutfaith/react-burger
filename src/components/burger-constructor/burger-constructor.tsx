@@ -6,16 +6,16 @@ import Modal from '../modal/modal';
 import OrderDetails from '../order-details/OrderDetails';
 import { ItemTypes } from '../utils/ItemTypes';
 import { useDrop, useDrag, DropTargetMonitor } from 'react-dnd';
+import { sendOrderItems } from '../../services/actions/ingredients';
 import {
-    sendOrderItems,
     DELETE_BURGER_INGREDIENT,
     ADD_BURGER_INGREDIENT,
     ADD_BUN,
     CHANGE_INGREDIENTS_POSITION,
     ADD_ITEM_TO_COUNTER,
     DELETE_ITEM_FROM_COUNTER
-} from '../../services/actions/ingredients';
-import { useSelector, useDispatch } from 'react-redux';
+} from '../../services/constants/ingredients';
+import { useSelector, useDispatch } from '../../services/hooks';
 import { useHistory } from 'react-router-dom';
 
 interface IIngredientProps {
@@ -103,16 +103,16 @@ const DraggableIngredient: FC<IIngredientProps> = ({ item, id, index, deleteItem
 
 
 const BurgerConstructor: FC = () => {
-    const totalPrice = useSelector((store: any) => store.ingredients.totalPrice);
-    const ingredients = useSelector((store: any) => store.ingredients.currentIngredients);
-    const isBunAdded = useSelector((store: any) => store.ingredients.isBunAdded);
-    const bun = useSelector((store: any) => store.ingredients.bun);
+    const totalPrice = useSelector((store) => store.ingredients.totalPrice);
+    const ingredients = useSelector((store) => store.ingredients.currentIngredients);
+    const isBunAdded = useSelector((store) => store.ingredients.isBunAdded);
+    const bun = useSelector((store) => store.ingredients.bun) as TItem;
     const dispatch = useDispatch();
     const [showModal, setShowModal] = useState<boolean>(false);
-    const order = useSelector((store: any) => store.ingredients.order);
-    const counterIngredients = useSelector((store: any) => store.ingredients.counterIngredients);
-    const user = useSelector((store: any) => store.profile.user);
-    const isAuthenticated = useSelector((store: any) => store.profile.isAuthenticated);
+    const order = useSelector((store) => store.ingredients.order);
+    const counterIngredients = useSelector((store) => store.ingredients.counterIngredients);
+    const user = useSelector((store) => store.profile.user);
+    const isAuthenticated = useSelector((store) => store.profile.isAuthenticated);
     const history = useHistory();
 
     const moveCard = useCallback((dragIndex: number, hoverIndex: number) => {
@@ -125,7 +125,7 @@ const BurgerConstructor: FC = () => {
             type: CHANGE_INGREDIENTS_POSITION,
             newCards
         })
-    }, [ingredients]);
+    }, [dispatch, ingredients]);
 
 
     function showModalWindow() {
@@ -134,7 +134,7 @@ const BurgerConstructor: FC = () => {
         if (!isAuthenticated && Object.keys(user).length <= 0) {
             history.push({ pathname: '/login' })
         } else {
-            if (isBunAdded && ingredientsIds == undefined) {
+            if (isBunAdded && ingredientsIds === undefined) {
                 dispatch(sendOrderItems([bun._id]));
                 setShowModal(true)
             } else if (isBunAdded && ingredientsIds !== undefined) {
@@ -208,7 +208,7 @@ const BurgerConstructor: FC = () => {
     function decreaseCounter(item: TItem) {
         const copiedCounterArray = [...counterIngredients];
         const index = copiedCounterArray.findIndex((elem: TItem) => elem._id === item._id);
-        let count: number = copiedCounterArray[index]["counter"];
+        let count = copiedCounterArray[index]["counter"] as number;
         let newCount = count - 1
 
         copiedCounterArray[index] = {
@@ -230,7 +230,7 @@ const BurgerConstructor: FC = () => {
         drop: (item: TItem, monitor) => {
             item.hasOwnProperty('name') && addItem(item);
         },
-        collect: (monitor: any) => ({
+        collect: (monitor) => ({
             isOver: !!monitor.isOver()
         })
     })

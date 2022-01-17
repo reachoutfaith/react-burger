@@ -1,6 +1,6 @@
 import { getCookie } from './utils';
 import {
-    TItem,
+    TIngredients,
     TFetchResponse,
     TFetchOrderIngredients,
     TFetchSignUser,
@@ -10,36 +10,36 @@ import {
     CustomResponse
 } from '../components/utils/types';
 
-
-export const checkResponse = (res: CustomResponse<JSON>) => {
-    try {
-        if (res.ok) {
-            return res.json()
-        } else {
-            return res.json().then((err) => Promise.reject(`Ошибка ${res.status}`));
-        }
-    } catch (err) {
-        console.log(err)
-    }
-
-    //previous solution
-    // return res.ok ? res.json() : res.json().then((err) => Promise.reject(`Ошибка ${res.status}`));
-};
-
+// Main API constant
 export const URL = 'https://norma.nomoreparties.space/api';
 
+// Web Socket constant
+export const WS_URL = 'wss://norma.nomoreparties.space/orders';
+
+
+
+export const checkResponse = (res: CustomResponse<JSON>) => {
+    //previous solution
+    return res.ok ? res.json() : res.json().then((err) => Promise.reject(`Ошибка ${res.status}`));
+};
+
+
+
 export const fetchIngredients = async () => {
-    const data = await fetch(URL + '/ingredients').then(checkResponse) as TItem[];
+    const data = await fetch(URL + '/ingredients').then(checkResponse) as TIngredients;
+    console.log('data ', data)
     return data
 
 }
 
-export const fetchOrderIngredients = async (orderItems: TItem[]) => {
+export const fetchOrderIngredients = async (orderItems: string[]) => {
     const body = { ingredients: orderItems };
+    const accessToken = getCookie('accessToken');
     const data = await fetch(URL + '/orders', {
         method: "POST",
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${accessToken}`
         },
         body: JSON.stringify(body)
     }).then(checkResponse) as TFetchOrderIngredients;
@@ -90,6 +90,7 @@ export const createUser = async (form: { email: string, password: string, name: 
 }
 
 export const loginUser = async (form: { email: string, password: string }) => {
+    console.log('loginUser ')
     const data = await fetch(URL + '/auth/login', {
         method: "POST",
         mode: 'cors',
@@ -143,7 +144,7 @@ export const getUserInfo = async () => {
     return data;
 }
 
-export const refreshToken = async (token: string) => {
+export const refreshToken = async (token: string | null) => {
     const body = {
         token: token
     }
@@ -175,3 +176,5 @@ export const updateUser = async (form: TUpdateUserInfo) => {
     console.log('update user data ', data)
     return data
 }
+
+

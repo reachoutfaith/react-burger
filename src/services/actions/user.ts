@@ -7,34 +7,128 @@ import {
     getUserInfo
 } from '../API';
 
+import { AppThunk, AppDispatch } from '../types/index';
+
 import { setCookie } from '../utils';
 
-export const SAVE_PASSWORD_REQUEST = "SAVE_PASSWORD_REQUEST";
-export const SAVE_PASSWORD_SUCCESS = "SAVE_PASSWORD_SUCCESS";
-export const SAVE_PASSWORD_ERROR = "SAVE_PASSWORD_ERROR";
+import {
+    SAVE_PASSWORD_REQUEST,
+    SAVE_PASSWORD_SUCCESS,
+    SAVE_PASSWORD_ERROR,
+    CREATE_USER_REQUEST,
+    CREATE_USER_SUCCESS,
+    CREATE_USER_ERROR,
+    LOGIN_USER_REQUEST,
+    LOGIN_USER_SUCCESS,
+    LOGIN_USER_ERROR,
+    GET_USER_SUCCESS,
+    UPDATE_USER_SUCCESS,
+    UPDATE_USER_ERROR,
+    REFRESH_TOKEN_REQUEST,
+    REFRESH_TOKEN_SUCCESS,
+    REFRESH_TOKEN_ERROR,
+    LOGOUT_SUCCESS
+} from '../constants/user';
 
-export const CREATE_USER_REQUEST = "CREATE_USER_REQUEST";
-export const CREATE_USER_SUCCESS = "CREATE_USER_SUCCESS";
-export const CREATE_USER_ERROR = "CREATE_USER_ERROR";
+import { TUser } from '../../components/utils/types';
 
-export const LOGIN_USER_REQUEST = "LOGIN_USER_REQUEST";
-export const LOGIN_USER_SUCCESS = "LOGIN_USER_SUCCESS";
-export const LOGIN_USER_ERROR = "LOGIN_USER_ERROR";
+// Types for Actions
+interface ISavePasswordRequestAction {
+    readonly type: typeof SAVE_PASSWORD_REQUEST
+}
 
-export const GET_USER_SUCCESS = "GET_USER_SUCCESS";
+interface ISavePasswordSuccessAction {
+    readonly type: typeof SAVE_PASSWORD_SUCCESS
+}
 
-export const UPDATE_USER_SUCCESS = 'UPDATE_USER_SUCCESS';
-export const UPDATE_USER_ERROR = 'UPDATE_USER_ERROR';
+interface ISavePasswordErrorAction {
+    readonly type: typeof SAVE_PASSWORD_ERROR,
+    readonly errorMessage?: string
+}
 
-export const REFRESH_TOKEN_REQUEST = "REFRESH_TOKEN_REQUEST";
-export const REFRESH_TOKEN_SUCCESS = "REFRESH_TOKEN_SUCCESS";
-export const REFRESH_TOKEN_ERROR = "REFRESH_TOKEN_ERROR";
+interface ICreateUserRequestAction {
+    readonly type: typeof CREATE_USER_REQUEST
+}
 
-export const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
+interface ICreateUserSuccessAction {
+    readonly type: typeof CREATE_USER_SUCCESS,
+    readonly user: TUser
+}
+
+interface ICreateUserErrorAction {
+    readonly type: typeof CREATE_USER_ERROR,
+    readonly errorMessage?: string
+}
+
+interface ILoginUserAction {
+    readonly type: typeof LOGIN_USER_REQUEST
+}
+
+interface ILoginUserSuccessAction {
+    readonly type: typeof LOGIN_USER_SUCCESS,
+    readonly user: TUser
+}
+
+interface ILoginUserErrorAction {
+    readonly type: typeof LOGIN_USER_ERROR,
+    readonly errorMessage?: string
+}
+
+interface IGetUserSuccessAction {
+    readonly type: typeof GET_USER_SUCCESS,
+    readonly user: TUser
+}
+
+interface IUpdateUserSuccessAction {
+    readonly type: typeof UPDATE_USER_SUCCESS,
+    readonly user: TUser
+}
+
+interface UpdateUserErrorAction {
+    readonly type: typeof UPDATE_USER_ERROR,
+    readonly errorMessage?: string
+}
+
+interface IRefreshTokenRequestAction {
+    readonly type: typeof REFRESH_TOKEN_REQUEST
+}
+
+interface IRefreshTokenSuccessAction {
+    readonly type: typeof REFRESH_TOKEN_SUCCESS,
+    readonly user: TUser
+}
+
+interface IRefreshTokenErrorAction {
+    readonly type: typeof REFRESH_TOKEN_ERROR,
+    readonly errorMessage?: string
+}
+
+interface ILogoutSuccessAction {
+    readonly type: typeof LOGOUT_SUCCESS
+}
+
+// creating Union TUserProfileActions
+export type TUserProfileActions =
+    | ISavePasswordRequestAction
+    | ISavePasswordSuccessAction
+    | ISavePasswordErrorAction
+    | ICreateUserRequestAction
+    | ICreateUserSuccessAction
+    | ICreateUserErrorAction
+    | ILoginUserAction
+    | ILoginUserSuccessAction
+    | ILoginUserErrorAction
+    | IGetUserSuccessAction
+    | IUpdateUserSuccessAction
+    | UpdateUserErrorAction
+    | IRefreshTokenRequestAction
+    | IRefreshTokenSuccessAction
+    | IRefreshTokenErrorAction
+    | ILogoutSuccessAction
 
 
-export function savePasswordThunk(form) {
-    return function (dispatch) {
+export const savePasswordThunk: AppThunk = (form: { password: string, token: string }) => {
+    return function (dispatch: AppDispatch) {
         dispatch({
             type: SAVE_PASSWORD_REQUEST
         });
@@ -60,8 +154,8 @@ export function savePasswordThunk(form) {
     };
 }
 
-export function createUserThunk(form) {
-    return function (dispatch) {
+export const createUserThunk: AppThunk = (form: { email: string, password: string, name: string }) => {
+    return function (dispatch: AppDispatch) {
         dispatch({
             type: CREATE_USER_REQUEST
         });
@@ -104,14 +198,16 @@ export function createUserThunk(form) {
     };
 }
 
-export function loginUserThunk(form) {
-    return function (dispatch) {
+export const loginUserThunk: AppThunk = (form: { email: string, password: string }) => {
+    return function (dispatch: AppDispatch) {
         dispatch({
             type: LOGIN_USER_REQUEST
         });
+        console.log('login user ', form)
         loginUser(form)
             .then(res => {
                 if (res && res.success) {
+                    console.log('success ', res)
                     let accessToken = res.accessToken.split('Bearer ')[1];
 
                     setCookie('accessToken', accessToken);
@@ -141,7 +237,7 @@ export function loginUserThunk(form) {
                     });
                 }
             }).catch((err) => {
-                console.log(err)
+                console.log(err);
                 dispatch({
                     type: LOGIN_USER_ERROR
                 });
@@ -149,8 +245,8 @@ export function loginUserThunk(form) {
     };
 }
 
-export function refreshTokenThunk() {
-    return function (dispatch) {
+export const refreshTokenThunk: AppThunk = () => {
+    return function (dispatch: AppDispatch) {
         dispatch({
             type: REFRESH_TOKEN_REQUEST
         });
@@ -164,7 +260,7 @@ export function refreshTokenThunk() {
                     setCookie('accessToken', accessToken, { expires: 1200 });
                     localStorage.setItem('refreshToken', res.refreshToken);
 
-                    const data = getUserInfo().then(data => {
+                    getUserInfo().then(data => {
                         if (data.success === true) {
                             dispatch({
                                 type: REFRESH_TOKEN_SUCCESS,

@@ -1,110 +1,36 @@
-import React, { useState, useRef, useEffect, useCallback, FC, ChangeEvent } from 'react';
+import React, { useEffect, useCallback, FC } from 'react';
 import style from './profile.module.css';
-import { Button } from '@ya.praktikum/react-developer-burger-ui-components';
-import { useDispatch, useSelector } from 'react-redux';
-import { LOGOUT_SUCCESS, refreshTokenThunk } from '../services/actions/user'
-import { getUserInfo, updateUser, logoutUser } from '../services/API';
-import { useHistory, NavLink } from 'react-router-dom';
-import { GET_USER_SUCCESS, UPDATE_USER_ERROR, UPDATE_USER_SUCCESS } from '../services/actions/user'
-import { deleteCookie } from '../services/utils';
-import { PasswordInput } from '../components/custom/input/password-input';
-import { EmailInput } from '../components/custom/input/email-input';
-import { NameInput } from '../components/custom/input/name-input';
-import { TFetchResponse, TGetUserInfo, TUpdateUserInfo } from '../components/utils/types';
-
-type TProfileForm = {
-    name: string;
-    email: string;
-    password: string
-}
+import { useDispatch } from '../services/hooks';
+import {
+    LOGOUT_SUCCESS
+} from '../services/constants/user';
+import {
+    WS_CONNECTION_START,
+    WS_CONNECTION_CLOSED
+} from '../services/constants/socket';
+import { logoutUser, WS_URL } from '../services/API';
+import { useHistory, NavLink, useLocation } from 'react-router-dom';
+import { deleteCookie, getCookie } from '../services/utils';
+import { TFetchResponse } from '../components/utils/types';
+import UserSettings from '../components/profile/user-settings';
+import UserOrdersFeed from '../components/profile/user-orders-feed';
 
 const ProfilePage: FC = () => {
     const dispatch = useDispatch();
-    const user = useSelector((store: any) => store.profile.user);
-    const [prevState, setPrevState] = useState<TUpdateUserInfo | {}>({})
-    const [form, setForm] = useState<TProfileForm>({ name: user.name, email: user.email, password: 'qazswx' });
     const history = useHistory();
-    const hasError = useSelector((store: any) => store.profile.updateUserSuccess);
-    const error = useSelector((store: any) => store.profile.errorMessage);
-
-    const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
-
-    };
+    const location = useLocation<{ pathname: string }>();
+    let path = location.pathname;
+    const accessToken = getCookie('accessToken');
 
     useEffect(() => {
-        setForm({ name: user.name, email: user.email, password: 'qazswx' })
-    }, [user])
-
-    const uploadUserInfo = async () => {
-        if (!user || Object.keys(user).length <= 0) {
-            const getUserRequest: TGetUserInfo = await getUserInfo();
-
-            if (getUserRequest.success === false) {
-                dispatch(refreshTokenThunk());
-            } else {
-                dispatch({
-                    type: GET_USER_SUCCESS,
-                    user: getUserRequest.user
-                })
-
-                if (Object.keys(prevState).length <= 0) {
-                    setPrevState(getUserRequest.user)
-                }
-            }
-        }
-    }
-
-    useEffect(
-        () => {
-            uploadUserInfo();
-        }, [user, history]);
-
-    const updateUserInfo = useCallback(
-
-        async (form, user) => {
-            setPrevState({ ...user })
+        dispatch({ type: WS_CONNECTION_START, payload: `${WS_URL}/all?token=${accessToken}` });
+        return () => {
+            dispatch({ type: WS_CONNECTION_CLOSED });
+        };
+    }, [accessToken, dispatch])
 
 
-            const updateUserRequest: TGetUserInfo = await updateUser(form);
-
-            if (updateUserRequest.success === true) {
-                dispatch({
-                    type: UPDATE_USER_SUCCESS,
-                    user: updateUserRequest.user
-                });
-
-            } else {
-                dispatch({
-                    type: UPDATE_USER_ERROR,
-                    errorMessage: updateUserRequest.message
-                })
-            }
-
-        }, [form, user]
-    );
-
-    const cancelUserChanges = useCallback(
-        async (prevState) => {
-            const updateUserRequest: TGetUserInfo = await updateUser(prevState);
-
-            if (updateUserRequest.success === true) {
-                dispatch({
-                    type: UPDATE_USER_SUCCESS,
-                    user: updateUserRequest.user
-                });
-
-            } else {
-                dispatch({
-                    type: UPDATE_USER_ERROR,
-                    errorMessage: updateUserRequest.message
-                })
-            }
-
-        }, [form]
-    );
-
-    const signOut = async () => {
+    const signOut = useCallback(async () => {
         const logoutRequest: TFetchResponse = await logoutUser();
 
         if (logoutRequest.success === true) {
@@ -114,7 +40,7 @@ const ProfilePage: FC = () => {
                 type: LOGOUT_SUCCESS
             })
         }
-    }
+    }, [dispatch])
 
     const logout = useCallback(
         () => {
@@ -123,7 +49,6 @@ const ProfilePage: FC = () => {
             });
         }, [signOut, history]
     )
-
 
 
     return (
@@ -143,30 +68,9 @@ const ProfilePage: FC = () => {
                         </NavLink>
                     </nav>
                 </nav>
-                <div className={`ml-15 ${style.window}`}>
-                    {hasError && <span className={`mt-4 mb-4 text text_type_main-default ${style.error}`}>{error}</span>}
-                    <div className="mb-6">
-                        <NameInput placeholder='Имя' onChange={onChange} value={form.name} name={'name'} />
-                    </div>
-                    <div className="mb-6">
-                        <EmailInput onChange={onChange} value={form.email} name={'email'} />
-                    </div>
-                    <div className="mb-6">
-                        <PasswordInput placeholder='Пароль' onChange={onChange} value={form.password} name={'password'} />
-                    </div>
-                    <div className={`mt-6 ${style.buttons}`}>
-                        <div className="ml-2">
-                            <Button type="secondary" size="medium" onClick={() => cancelUserChanges(prevState)}>
-                                Отмена
-                            </Button>
-                        </div>
-                        <div className="ml-2">
-                            <Button type="primary" size="medium" onClick={() => updateUserInfo(form, user)}>
-                                Сохранить
-                            </Button>
-                        </div>
-                    </div>
-                </div>
+
+                {path === '/profile' && <UserSettings />}
+                {path === '/profile/orders' && <UserOrdersFeed />}
             </div>
             <span className={`text text_type_main-default text_color_inactive mt-8 ${style.undertitle}`}>В этом разделе вы можете
                 изменить свои персональные данные</span>
