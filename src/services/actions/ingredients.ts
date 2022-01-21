@@ -51,7 +51,7 @@ interface ISendOrderItemsRequestAction {
 
 interface ISendOrderItemsSuccessAction {
     readonly type: typeof SEND_ORDER_ITEMS_SUCCESS,
-    readonly order: TOrder | undefined
+    readonly order: number
 }
 
 interface ISendOrderItemsErrorAction {
@@ -60,18 +60,20 @@ interface ISendOrderItemsErrorAction {
 
 interface IAddBurgerIngredientAction {
     readonly type: typeof ADD_BURGER_INGREDIENT,
-    readonly item: TItem
+    readonly item: TItem,
+    readonly price: number
 }
 
 interface IDeleteBurgerIngredientAction {
     readonly type: typeof DELETE_BURGER_INGREDIENT,
     readonly elemIndex: number,
-    readonly item: TItem
+    readonly price: number
 }
 
 interface IAddBunAction {
     readonly type: typeof ADD_BUN,
-    readonly item: TItem
+    readonly item: TItem,
+    readonly price: number
 }
 
 interface IChangeIngredientsPositionAction {
@@ -130,9 +132,11 @@ export const sendOrderItems: AppThunk = (items: string[]) => {
         fetchOrderIngredients(items)
             .then(res => {
                 if (res && res.success) {
+                    console.log('res order', res.order);
+                    console.log('res order number', res.order!.number, typeof res.order!.number)
                     dispatch({
                         type: SEND_ORDER_ITEMS_SUCCESS,
-                        order: res.order
+                        order: res.order!.number
                     });
                 } else {
                     dispatch({

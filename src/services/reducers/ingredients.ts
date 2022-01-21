@@ -56,7 +56,7 @@ export const ingredientsReducer = (state = initialState, action: TIngredientsAct
                 ...state,
                 sendOrderSuccess: true,
                 sendOrderRequest: false,
-                order: action.order!["number"],
+                order: action.order,
                 currentIngredients: [],
                 bun: {},
                 isBunAdded: false,
@@ -71,7 +71,7 @@ export const ingredientsReducer = (state = initialState, action: TIngredientsAct
             return {
                 ...state,
                 currentIngredients: [...state.currentIngredients, action.item],
-                totalPrice: state.totalPrice + action.item["price"]
+                totalPrice: state.totalPrice + action.price
             }
         }
         case DELETE_BURGER_INGREDIENT: {
@@ -79,7 +79,7 @@ export const ingredientsReducer = (state = initialState, action: TIngredientsAct
                 ...state,
                 currentIngredients: [...state.currentIngredients.slice(0, action.elemIndex),
                 ...state.currentIngredients.slice(action.elemIndex + 1)],
-                totalPrice: state.totalPrice - action.item["price"]
+                totalPrice: state.totalPrice - action.price
             }
         }
         case ADD_BUN: {
@@ -87,7 +87,7 @@ export const ingredientsReducer = (state = initialState, action: TIngredientsAct
                 ...state,
                 bun: { ...action.item },
                 isBunAdded: true,
-                totalPrice: state.totalPrice + action.item["price"] * 2
+                totalPrice: state.totalPrice + action.price * 2
             }
         }
         case CHANGE_INGREDIENTS_POSITION: {

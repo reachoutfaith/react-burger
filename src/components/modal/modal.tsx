@@ -33,12 +33,14 @@ const Modal: FC<IComponentProps> = ({ title, closeModal, children }) => {
 
     return ReactDOM.createPortal(
         (
-            <div className={`${ModalStyle.modal__wrapper}`}>
+            <div id='modal' className={`${ModalStyle.modal__wrapper}`}>
                 <ModalOverlay closeModal={closeModal}></ModalOverlay>
                 <div className={`${ModalStyle.modal} p-10`} >
                     <header className={`${ModalStyle.modal__header}`}>
                         {title && <h1 className="text text_type_main-medium">{title}</h1>}
-                        <CloseIcon type="primary" onClick={closeModal} />
+                        <div id='closeModalIcon'>
+                            <CloseIcon type="primary" onClick={closeModal} />
+                        </div>
                     </header>
                     <main className={`${ModalStyle.modal__card}`}>
                         {children}

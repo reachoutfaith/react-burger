@@ -14,7 +14,7 @@ import NotFound404 from '../../pages/not-found-404';
 import ProtectedRoute from './protected-route'
 import Modal from '../modal/modal';
 import IngredientDetails from '../ingredient-details/ingredient-details';
-import { refreshTokenThunk } from '../../services/actions/user';
+import { getUser, refreshTokenThunk } from '../../services/actions/user';
 import OrderFullMode from '../orders-feed/order-full-mode';
 
 import { TGetUserInfo } from '../utils/types';
@@ -31,21 +31,30 @@ const App: FC = () => {
   const backgroundProfile = location.state?.backgroundProfile;
   const prevPath: string | undefined | null = location.state?.prevPath;
   const isAuthenticated = useSelector(store => store.profile.isAuthenticated);
+  const getUserError = useSelector(store => store.profile.getUserError)
 
   const uploadUserInfo = useCallback(async () => {
     if (!isAuthenticated) {
-      const getUserRequest: TGetUserInfo = await getUserInfo();
+      dispatch(getUser());
 
-      if (getUserRequest.success === false) {
-        dispatch(refreshTokenThunk());
-      } else {
-        dispatch({
-          type: GET_USER_SUCCESS,
-          user: getUserRequest.user
-        })
-      }
+      // const getUserRequest: TGetUserInfo = await getUserInfo();
+
+      // if (getUserRequest.success === false) {
+      //   dispatch(refreshTokenThunk());
+      // } else {
+      //   dispatch({
+      //     type: GET_USER_SUCCESS,
+      //     user: getUserRequest.user
+      //   })
+      // }
+
     }
-  }, [dispatch, isAuthenticated])
+
+    if (getUserError) {
+      dispatch(refreshTokenThunk());
+    }
+
+  }, [dispatch, isAuthenticated, getUserError])
 
 
   function closeModalWindow() {
