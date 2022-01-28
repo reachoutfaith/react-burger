@@ -81,7 +81,8 @@ export const profileReducer = (state = initialState, action: TUserProfileActions
             return {
                 ...state,
                 savePasswordRequest: false,
-                savePasswordSuccess: true
+                savePasswordSuccess: true,
+                isAuthenticated: true
             }
         }
         case SAVE_PASSWORD_ERROR: {
@@ -89,6 +90,7 @@ export const profileReducer = (state = initialState, action: TUserProfileActions
                 ...state,
                 savePasswordRequest: false,
                 savePasswordFailed: true,
+                isAuthenticated: false,
                 errorMessage: action.errorMessage
             }
         }
