@@ -71,7 +71,7 @@ export type TFetchOrderIngredients = TFetchResponse & {
 }
 
 export type TOrder = {
-    number: string;
+    number: number;
 }
 
 // Register, Login New User 

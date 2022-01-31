@@ -6,12 +6,15 @@ import {
     UPDATE_USER_ERROR,
     UPDATE_USER_SUCCESS
 } from '../../services/constants/user';
-import { updateUser } from '../../services/API';
 import { useHistory } from 'react-router-dom';
+import { updateUser } from '../../services/API';
 import { PasswordInput } from '../custom/input/password-input';
 import { EmailInput } from '../custom/input/email-input';
 import { NameInput } from '../custom/input/name-input';
 import { TGetUserInfo, TUpdateUserInfo, TUser } from '../utils/types';
+// import { getUserInfo } from '../../services/API';
+// import { GET_USER_SUCCESS } from '../../services/constants/user';
+// import { refreshTokenThunk } from '../../services/actions/user';
 
 type TProfileForm = {
     name: string;
@@ -33,9 +36,12 @@ const UserSettings: FC = () => {
 
     };
 
-    useEffect(() => {
 
-        setForm({ name: user.name, email: user.email, password: 'qazswx' })
+
+
+    useEffect(() => {
+        setForm({ name: user.name, email: user.email, password: 'qazswx' });
+
     }, [user, history])
 
 

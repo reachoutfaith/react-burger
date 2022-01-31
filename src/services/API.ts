@@ -20,7 +20,11 @@ export const WS_URL = 'wss://norma.nomoreparties.space/orders';
 
 export const checkResponse = (res: CustomResponse<JSON>) => {
     //previous solution
-    return res.ok ? res.json() : res.json().then((err) => Promise.reject(`Ошибка ${res.status}`));
+    console.log('in checkResponse')
+    return res.ok ? res.json() : res.json().then((err) => {
+        console.log('checkResponse err ', err)
+        return Promise.reject(`Ошибка ${res.status}`)
+    });
 };
 
 
@@ -127,6 +131,7 @@ export const logoutUser = async () => {
 
 
 export const getUserInfo = async () => {
+    console.log('i work ', true)
     const data = await fetch(URL + '/auth/user', {
         method: "GET",
         mode: 'cors',

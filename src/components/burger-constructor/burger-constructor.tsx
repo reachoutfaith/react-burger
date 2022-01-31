@@ -155,12 +155,14 @@ const BurgerConstructor: FC = () => {
         if (item.type === 'bun') {
             dispatch({
                 type: ADD_BUN,
-                item
+                item: item,
+                price: item["price"]
             })
         } else {
             dispatch({
                 type: ADD_BURGER_INGREDIENT,
-                item: item
+                item: item,
+                price: item["price"]
             })
         }
 
@@ -198,8 +200,8 @@ const BurgerConstructor: FC = () => {
         let elemIndex: number = ingredients.findIndex((elem: TItem) => elem._id === item._id);
         dispatch({
             type: DELETE_BURGER_INGREDIENT,
-            item,
-            elemIndex
+            elemIndex: elemIndex,
+            price: item["price"]
         })
 
         decreaseCounter(item);
@@ -237,7 +239,7 @@ const BurgerConstructor: FC = () => {
 
 
     return (
-        <div ref={drop} style={{ border: isOver ? "5px solid red" : "5px solid transparent" }} className={`${BurgerConstructorStyle.wrapper}`} >
+        <div id="burgerConstructor" ref={drop} style={{ border: isOver ? "5px solid red" : "5px solid transparent" }} className={`${BurgerConstructorStyle.wrapper}`} >
             {isBunAdded && <div key={'bun-top' + bun._id} className={`mt-2 mb-2 ${BurgerConstructorStyle.item} ml-8`} >
                 <ConstructorElement
                     type="top"

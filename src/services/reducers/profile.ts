@@ -9,6 +9,8 @@ import {
     LOGIN_USER_SUCCESS,
     LOGIN_USER_ERROR,
     GET_USER_SUCCESS,
+    GET_USER_REQUEST,
+    GET_USER_ERROR,
     UPDATE_USER_SUCCESS,
     UPDATE_USER_ERROR,
     REFRESH_TOKEN_REQUEST,
@@ -18,8 +20,54 @@ import {
 } from '../constants/user';
 
 import { TUserProfileActions } from '../actions/user';
+import { TUser } from '../../components/utils/types';
 
-import initialState, { TInitialState } from '../store';
+
+type TInitialState = {
+    savePasswordRequest: boolean;
+    savePasswordSuccess: boolean;
+    savePasswordFailed: boolean;
+    createUserRequest: boolean;
+    createUserSuccess: boolean;
+    createUserFailed: boolean;
+    loginUserRequest: boolean;
+    loginUserSuccess: boolean;
+    loginUserFailed: boolean;
+    user: TUser | {},
+    isAuthenticated: boolean;
+    errorMessage: string | undefined;
+    getUserRequest: boolean;
+    getUserSuccess: boolean;
+    getUserError: boolean;
+    updateUserSuccess: boolean;
+    refreshTokenRequest: boolean;
+    refreshTokenSuccess: boolean;
+    refreshTokenFailed: boolean;
+    logoutSuccess: boolean;
+};
+
+const initialState: TInitialState = {
+    savePasswordRequest: false,
+    savePasswordSuccess: false,
+    savePasswordFailed: false,
+    createUserRequest: false,
+    createUserSuccess: false,
+    createUserFailed: false,
+    loginUserRequest: false,
+    loginUserSuccess: false,
+    loginUserFailed: false,
+    user: {},
+    isAuthenticated: false,
+    errorMessage: '',
+    getUserRequest: false,
+    getUserSuccess: false,
+    getUserError: false,
+    updateUserSuccess: false,
+    refreshTokenRequest: false,
+    refreshTokenSuccess: false,
+    refreshTokenFailed: false,
+    logoutSuccess: false
+};
 
 export const profileReducer = (state = initialState, action: TUserProfileActions): TInitialState => {
     switch (action.type) {
@@ -33,7 +81,8 @@ export const profileReducer = (state = initialState, action: TUserProfileActions
             return {
                 ...state,
                 savePasswordRequest: false,
-                savePasswordSuccess: true
+                savePasswordSuccess: true,
+                isAuthenticated: true
             }
         }
         case SAVE_PASSWORD_ERROR: {
@@ -41,6 +90,7 @@ export const profileReducer = (state = initialState, action: TUserProfileActions
                 ...state,
                 savePasswordRequest: false,
                 savePasswordFailed: true,
+                isAuthenticated: false,
                 errorMessage: action.errorMessage
             }
         }
@@ -99,8 +149,22 @@ export const profileReducer = (state = initialState, action: TUserProfileActions
             return {
                 ...state,
                 getUserSuccess: true,
-                user: { ...action.user },
+                user: action.user,
                 isAuthenticated: true
+            }
+        }
+        case GET_USER_REQUEST: {
+            return {
+                ...state,
+                getUserRequest: true
+            }
+        }
+        case GET_USER_ERROR: {
+            return {
+                ...state,
+                getUserRequest: false,
+                getUserError: true,
+                isAuthenticated: false
             }
         }
         case UPDATE_USER_SUCCESS: {

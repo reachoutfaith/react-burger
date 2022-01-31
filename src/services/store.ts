@@ -1,11 +1,11 @@
-import { TItem, TUser } from '../components/utils/types';
+import { TItem } from '../components/utils/types';
 
 // Types for Initial State of the Store
 export type TInitialState = {
     ingredients: TItem[];
     currentIngredients: TItem[];
     ingredient: TItem | {};
-    order: string | number | undefined;
+    order: number;
     ingredientsRequest: boolean;
     ingredientsSuccess: boolean;
     ingredientsFailed: boolean;
@@ -16,26 +16,6 @@ export type TInitialState = {
     sendOrderSuccess: boolean;
     sendOrderFailed: boolean;
     counterIngredients: TItem[];
-    savePasswordRequest: boolean;
-    savePasswordSuccess: boolean;
-    savePasswordFailed: boolean;
-    createUserRequest: boolean;
-    createUserSuccess: boolean;
-    createUserFailed: boolean;
-    loginUserRequest: boolean;
-    loginUserSuccess: boolean;
-    loginUserFailed: boolean;
-    user: TUser | {},
-    isAuthenticated: boolean;
-    errorMessage: string | undefined;
-    getUserRequest: boolean;
-    getUserSuccess: boolean;
-    getUserFailed: boolean;
-    updateUserSuccess: boolean;
-    refreshTokenRequest: boolean;
-    refreshTokenSuccess: boolean;
-    refreshTokenFailed: boolean;
-    logoutSuccess: boolean;
 }
 
 
@@ -53,27 +33,7 @@ const initialState: TInitialState = {
     sendOrderRequest: false,
     sendOrderSuccess: false,
     sendOrderFailed: false,
-    counterIngredients: [],
-    savePasswordRequest: false,
-    savePasswordSuccess: false,
-    savePasswordFailed: false,
-    createUserRequest: false,
-    createUserSuccess: false,
-    createUserFailed: false,
-    loginUserRequest: false,
-    loginUserSuccess: false,
-    loginUserFailed: false,
-    user: {},
-    isAuthenticated: false,
-    errorMessage: '',
-    getUserRequest: false,
-    getUserSuccess: false,
-    getUserFailed: false,
-    updateUserSuccess: false,
-    refreshTokenRequest: false,
-    refreshTokenSuccess: false,
-    refreshTokenFailed: false,
-    logoutSuccess: false
+    counterIngredients: []
 };
 
 

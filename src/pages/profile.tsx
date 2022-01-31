@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, FC } from 'react';
 import style from './profile.module.css';
-import { useDispatch } from '../services/hooks';
+import { useSelector, useDispatch } from '../services/hooks';
 import {
     LOGOUT_SUCCESS
 } from '../services/constants/user';
@@ -9,7 +9,7 @@ import {
     WS_CONNECTION_CLOSED
 } from '../services/constants/socket';
 import { logoutUser, WS_URL } from '../services/API';
-import { useHistory, NavLink, useLocation } from 'react-router-dom';
+import { useHistory, NavLink, useLocation, Redirect } from 'react-router-dom';
 import { deleteCookie, getCookie } from '../services/utils';
 import { TFetchResponse } from '../components/utils/types';
 import UserSettings from '../components/profile/user-settings';
@@ -18,9 +18,12 @@ import UserOrdersFeed from '../components/profile/user-orders-feed';
 const ProfilePage: FC = () => {
     const dispatch = useDispatch();
     const history = useHistory();
-    const location = useLocation<{ pathname: string }>();
+    const location = useLocation<any>();
     let path = location.pathname;
     const accessToken = getCookie('accessToken');
+    const isAuthenticated = useSelector((store) => store.profile.isAuthenticated);
+    const getUserError = useSelector(store => store.profile.getUserError);
+
 
     useEffect(() => {
         dispatch({ type: WS_CONNECTION_START, payload: `${WS_URL}/all?token=${accessToken}` });
@@ -50,6 +53,9 @@ const ProfilePage: FC = () => {
         }, [signOut, history]
     )
 
+    if (!isAuthenticated && getUserError) {
+        return <Redirect to={location.state?.from || '/'} />;
+    }
 
     return (
 

@@ -27,7 +27,9 @@ import {
     REFRESH_TOKEN_REQUEST,
     REFRESH_TOKEN_SUCCESS,
     REFRESH_TOKEN_ERROR,
-    LOGOUT_SUCCESS
+    LOGOUT_SUCCESS,
+    GET_USER_REQUEST,
+    GET_USER_ERROR
 } from '../constants/user';
 
 import { TUser } from '../../components/utils/types';
@@ -79,6 +81,15 @@ interface IGetUserSuccessAction {
     readonly user: TUser
 }
 
+interface IGetUserRequestAction {
+    readonly type: typeof GET_USER_REQUEST
+}
+
+interface IGetUserErrorAction {
+    readonly type: typeof GET_USER_ERROR,
+    readonly errorMessage?: string
+}
+
 interface IUpdateUserSuccessAction {
     readonly type: typeof UPDATE_USER_SUCCESS,
     readonly user: TUser
@@ -119,6 +130,8 @@ export type TUserProfileActions =
     | ILoginUserSuccessAction
     | ILoginUserErrorAction
     | IGetUserSuccessAction
+    | IGetUserRequestAction
+    | IGetUserErrorAction
     | IUpdateUserSuccessAction
     | UpdateUserErrorAction
     | IRefreshTokenRequestAction
@@ -253,7 +266,7 @@ export const refreshTokenThunk: AppThunk = () => {
         const token = localStorage.getItem('refreshToken');
         refreshToken(token)
             .then(res => {
-
+                console.log('refreshToken ', res)
                 if (res && res.success) {
                     let accessToken = res.accessToken.split('Bearer ')[1];
 
@@ -284,6 +297,36 @@ export const refreshTokenThunk: AppThunk = () => {
 
                 dispatch({
                     type: REFRESH_TOKEN_ERROR
+                });
+            })
+    };
+}
+
+
+export const getUser: AppThunk = () => {
+    console.log('get user thunk ')
+    return function (dispatch: AppDispatch) {
+        dispatch({
+            type: GET_USER_REQUEST
+        });
+        getUserInfo()
+            .then(res => {
+                console.log('get user body ', res)
+                if (res && res.success) {
+                    dispatch({
+                        type: GET_USER_SUCCESS,
+                        user: res.user
+                    })
+                } else {
+                    console.log('in get user error statement', res)
+                    dispatch({
+                        type: GET_USER_ERROR
+                    });
+                }
+            }).catch((err) => {
+                console.log('in error statement catch get user', err)
+                dispatch({
+                    type: GET_USER_ERROR
                 });
             })
     };

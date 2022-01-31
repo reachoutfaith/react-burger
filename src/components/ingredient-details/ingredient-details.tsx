@@ -30,19 +30,19 @@ const IngredientDetails: FC = () => {
             <div className={`${IngredientDetailsStyle.nutrients} mt-8`}>
                 <div className={`${IngredientDetailsStyle.nutrient__column} ml-3 mr-3`}>
                     <span className={`${IngredientDetailsStyle.text} text text_type_main-default text_color_inactive`}>Калории</span>
-                    <span className={`${IngredientDetailsStyle.text} text text_type_digits-default text_color_inactive`}>{currentIngredient.calories}</span>
+                    <span id="calories" className={`${IngredientDetailsStyle.text} text text_type_digits-default text_color_inactive`}>{currentIngredient.calories}</span>
                 </div>
                 <div className={`${IngredientDetailsStyle.nutrient__column} ml-3 mr-3`}>
                     <span className={`${IngredientDetailsStyle.text} text text_type_main-default text_color_inactive`}>Белки, г</span>
-                    <span className={`${IngredientDetailsStyle.text} text text_type_digits-default text_color_inactive`}>{currentIngredient.proteins}</span>
+                    <span id="proteins" className={`${IngredientDetailsStyle.text} text text_type_digits-default text_color_inactive`}>{currentIngredient.proteins}</span>
                 </div>
                 <div className={`${IngredientDetailsStyle.nutrient__column} ml-3 mr-3`}>
                     <span className={`${IngredientDetailsStyle.text} text text_type_main-default text_color_inactive`}>Жиры, г</span>
-                    <span className={`${IngredientDetailsStyle.text} text text_type_digits-default text_color_inactive`}>{currentIngredient.fat}</span>
+                    <span id="fats" className={`${IngredientDetailsStyle.text} text text_type_digits-default text_color_inactive`}>{currentIngredient.fat}</span>
                 </div>
                 <div className={`${IngredientDetailsStyle.nutrient__column} ml-3 mr-3`}>
                     <span className={`${IngredientDetailsStyle.text} text text_type_main-default text_color_inactive`}>Углеводы, г</span>
-                    <span className={`${IngredientDetailsStyle.text} text text_type_digits-default text_color_inactive`}>{currentIngredient.carbohydrates}</span>
+                    <span id="carbs" className={`${IngredientDetailsStyle.text} text text_type_digits-default text_color_inactive`}>{currentIngredient.carbohydrates}</span>
                 </div>
             </div>
         </div>
